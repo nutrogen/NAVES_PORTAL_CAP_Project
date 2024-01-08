@@ -1,0 +1,186 @@
+﻿@using Syncfusion.EJ2;
+@using Syncfusion.EJ2.Notifications;
+@using Syncfusion.EJ2.QueryBuilder;
+
+@{
+    var Modalanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Fade };
+    var CloseButton_CapPlanningInspectionPic = new
+    {
+        content = "CLOSE"
+    };
+
+    var SaveButton_CapPlanningInspectionPic = new
+    {
+        content = "SAVE",
+        isPrimary = true
+    };
+}
+
+<ejs-dialog id="modal_dialog_CapPlanningInspectionPic" animationSettings="Modalanimation" width="880px" height="400px"
+            target="#content-page"
+            open="dialogOpen_CapPlanningInspectionPic"
+            close="dialogClose_CapPlanningInspectionPic"
+            header="Inspection Schedule"
+            isModal="true"
+            visible="false"
+            allowDragging="true"
+            showCloseIcon="true"
+            created="modalCreated_CapPlanningInspectionPic">
+    @*<e-dialog-position X="600"> </e-dialog-position>*@
+    <e-content-template>
+        <form id="frmCapInspectionPic" method="post">
+            <input type="text" class="d-none" id="PIC_TYPE" name="PIC_TYPE" />
+            <input type="text" class="d-none" id="FLAG" name="FLAG" />
+            <input type="text" class="d-none" id="OPEN_TYPE" name="OPEN_TYPE" />
+            <input type="text" class="d-none" id="PIC_SCHEDULE_IDX" name="PIC_SCHEDULE_IDX" />
+
+            <div class="mx-0 mt-1 row">
+                <div class="col-sm-3" style="">
+                    <ejs-dropdownlist id="picUser" cssClass="inputable" placeholder="Select PIC..." select="OnChangeSelectPic">
+                        <e-dropdownlist-fields text="Name" value="Value"></e-dropdownlist-fields>
+                    </ejs-dropdownlist>
+                </div>
+
+                <div class="col-sm-9" style="">
+                    <ul id="picUserList" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;">
+                        <li name="picUserList" class="list-group-item m-1 p-0 border-0"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mx-0 mt-1 d-flex border-bottom row">
+                <div class="col-sm-8 align-self-center col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad">
+                    Inspection Date/Period(Planned)
+                </div>
+                <div class="col-sm-4 col align-self-center col-form-label bolder-start text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad;">Place</div>
+            </div>
+
+            <div class="mx-0 d-flex border-bottom row">
+                <div class="col-sm-4 align-self-center text-center col-form-label" style="border-left: 1px solid #728fad">
+                    <ejs-datepicker id="PLAN_INSPECTION_DATE_START" format="yyyy-MM-dd" cssClass="inputable" placeholder="From"></ejs-datepicker>
+                </div>
+                <div class="col-sm-4 align-self-center text-center col-form-label" style="border-left: 1px solid #728fad">
+                    <ejs-datepicker id="PLAN_INSPECTION_DATE_END" format="yyyy-MM-dd" cssClass="inputable" placeholder="To"></ejs-datepicker>
+                </div>
+                <div class="col-sm-4 align-self-center col-form-label" style="border-left: 1px solid #728fad">
+                    <ejs-textbox type="text" id="INSPECTION_PLACE" cssClass="e-outline text-left inputable" placeholder="Place..."></ejs-textbox>
+                </div>
+            </div>
+
+            <div class="mx-0 d-flex row" style="border-bottom: 1px solid #728fad;">
+                <div class="col-sm-12 align-self-center col-form-label" style="border-left: 1px solid #728fad">
+                    <ejs-textbox type="text" id="INSPECTION_DESCR" cssClass="e-outline text-left inputable" placeholder="Inspection detailed..."></ejs-textbox>
+                </div>
+            </div>
+        </form>
+    </e-content-template>
+    <e-dialog-buttons>
+        <e-dialog-dialogbutton buttonModel="SaveButton_CapPlanningInspectionPic" click="dlgBtnSaveClick_CapPlanningInspectionPic"></e-dialog-dialogbutton>
+        <e-dialog-dialogbutton buttonModel="CloseButton_CapPlanningInspectionPic" click="dlgBtnCloseClick_CapPlanningInspectionPic"></e-dialog-dialogbutton>
+    </e-dialog-buttons>
+</ejs-dialog>
+
+<script>
+    var dialogObj_CapPlanningInspectionPic;
+
+    function modalCreated_CapPlanningInspectionPic() {
+        dialogObj_CapPlanningInspectionPic = this;
+
+        //console.log("modalCreated_CapPlanningInspectionPic");
+    }
+
+    function dialogClose_CapPlanningInspectionPic() {
+        CapPlanningInspectionPicClose();
+        dialogObj_CapPlanningInspectionPic.style.display = 'block';
+    }
+
+    function dialogOpen_CapPlanningInspectionPic() {
+        /*
+        console.log("dialogOpen_CapPlanningInspectionPic");
+        if($("#PIC_TYPE").val() == "FATIGUE") {
+            var dropdownPicList = document.getElementById('picUser').ej2_instances[0];
+            dropdownPicList.dataSource = setPlanningPicGroup("PLANNING_PIC_FATIGUE");
+            dropdownPicList.refresh();
+        }
+        */
+    }
+
+    function dlgBtnCloseClick_CapPlanningInspectionPic() {
+        dialogObj_CapPlanningInspectionPic.hide();
+    }
+
+    function dlgBtnSaveClick_CapPlanningInspectionPic() {
+        if ($("#OPEN_TYPE").val() == "I") {
+            closeDialogInspectionPic();
+        } else if ($("#OPEN_TYPE").val() == "E") {
+            closeDialogInspectionPicEdit();
+        }
+        
+        dialogObj_CapPlanningInspectionPic.hide();
+    }
+
+    function OnChangeSelectPic(args) {
+        var acPicUser = document.getElementById('picUser').ej2_instances[0];
+
+        //console.log(args);
+
+        $.ajax({
+            type: "POST",
+            url: "/CapPlanning/GetSelectedPicInfo",
+            data: { SUR_NO: args.itemData.Value, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                if (response != null) {
+                    $("#picUserList").append("<li name=\"picUserList\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                        "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                        "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                        "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteInspectionUser('" + response.SUR_NO +
+                        "', 'picUserList','" + response.USER_NAME_E + "')\"></span>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC\" name=\"PLANNING_PIC\" value=\"" + response.SUR_NO + "\"\/>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_NAME\" name=\"PLANNING_PIC_NAME\" value=\"" + response.USER_NAME_E + "\"\/>" +
+                        "</li>");
+                    acPicUser.value = null;
+
+                    var deleteIndex = 0;
+                    acPicUser.dataSource.forEach((value, index) => {
+                        if (response.SUR_NO == value.Value) {
+                            acPicUser.dataSource.splice(index, 1);
+                            acPicUser.refresh();
+                        }
+                    });
+                }
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function OnClickDeleteInspectionUser(args, user, UserName) {
+        var _dropdownlist = document.getElementById('picUser').ej2_instances[0];
+        //console.log(_dropdownlist.dataSource);
+
+        $("#" + user + " > ." + args).remove();
+
+        //console.log(args);
+        //console.log(user);
+        //console.log(UserName);
+
+        var Data = {
+            Name: UserName + " (" + args + ")",
+            Value: args,
+            Castcading: null
+        };
+        
+        try {
+            _dropdownlist.addItem(Data, 0);
+        } catch(e) { }
+        
+        _dropdownlist.dataSource.unshift(Data);
+
+        //console.log(_dropdownlist.dataSource);
+    }
+
+    function InitCapPlanningInspectionPic() {
+
+    }
+
+</script>

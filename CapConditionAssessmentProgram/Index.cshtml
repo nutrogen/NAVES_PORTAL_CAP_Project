@@ -1,0 +1,129 @@
+﻿@using Syncfusion.EJ2
+
+@{
+    ViewBag.PageTitle = "CAP > ";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "Condition Assessment Program";
+    ViewBag.FunctionName = "List";
+}
+
+@section SearchSection{
+    <form asp-action="Index" asp-controller="CapConditionAssessmentProgram" method="post">
+        <div class="row align-items-center m-0">
+            <div class="col">
+                <ejs-textbox id="txtSearchBox" cssClass="e-outline inputable" placeholder="Search Keyword..."></ejs-textbox>
+            </div>
+            <div class="col-auto">
+                Period
+            </div>
+            <div class="col-2">
+                <ejs-datepicker id="dpStartDate" value="@DateTime.Now.AddYears(-1).ToShortDateString()" format="yyyy-MM-dd" placeholder="Start Date..." cssClass="inputable"></ejs-datepicker>
+            </div>
+            <div class="col-2">
+                <ejs-datepicker id="dpEndDate" value="@DateTime.Now.ToShortDateString()" format="yyyy-MM-dd" placeholder="End Date..." cssClass="inputable"></ejs-datepicker>
+            </div>
+            <div class="col">
+                <button asp-controller="CapConditionAssessmentProgram" asp-action="Index" id="Search" type="submit" class="btn btn-purple btn-medium rounded-pill waves-effect waves-light">Search</button>
+            </div>
+        </div>
+    </form>
+}
+
+    @section ContentsSection{   
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="ps-2 pageContentTitle">
+            <h3>@ViewBag.MenuName</h3>
+        </div>
+        <div class="ps-1">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ejs-grid id="Grid" dataSource="@ViewBag.DataSource" allowTextWrap="true" enableInfiniteScrolling="false" allowSorting="true" allowExcelExport="true"
+                  height="510"
+                  rowHeight="32"
+                  allowMultiSorting="true"
+                  allowTextWrap="true"
+                  allowResizing="true"
+                  allowReordering="true"
+                  allowSorting="true"
+                  allowFiltering="true"
+                  allowExcelExport="true"
+                  allowPdfExport="true"
+                  allowGrouping="true"
+                  allowPaging="true"
+                  showColumnChooser="true"
+                  toolbar="@( new List<string>() { "ColumnChooser", "ExcelExport", "PdfExport", "CsvExport", "Print"})">
+                <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+                <e-grid-pagesettings pageCount="10" pageSize="10" pageSizes="@(new string[] {"10", "15", "20" , "50", "All" })"></e-grid-pagesettings>
+                <e-grid-groupSettings enableLazyLoading="true" allowReordering="true" showDropArea="true"></e-grid-groupSettings>
+                <e-grid-columns>
+                    <e-grid-column field="NO" headerText="No" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="80"></e-grid-column>
+                    <e-grid-column field="PROJECT_STATUS" headerText="PROJECT_STATUS" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+                    <e-grid-column field="PROJECT_ID" headerText="PROJECT ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="150"></e-grid-column>
+                    <e-grid-column field="NSN_ID" headerText="NSN ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="130"></e-grid-column>
+                    <e-grid-column field="JOB_ID" headerText="JOB ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                    <e-grid-column field="WORK_ID" headerText="WORK ID" textAlign="Center" template="@Html.Raw("<div><a href=# onclick=goInspectionLog(\"${INSPECTION_LOG_IDX}\");>${WORK_ID}</a></div>")" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                    <e-grid-column field="VESSEL_NAME" headerText="Vessel Name (Type)" disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="200"></e-grid-column>
+                    <e-grid-column field="PROJECT_CATEGORY" headerText="Category" textAlign="Center" disableHtmlEncode="false" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+
+                    <e-grid-column headerText="Surveyor (PIC)" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                               columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() { new Syncfusion.EJ2.Grids.GridColumn { Field = "PIC_H", Width = "170", HeaderText = "H", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                      new Syncfusion.EJ2.Grids.GridColumn { Field = "PIC_M", Width = "170", HeaderText = "M", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                      new Syncfusion.EJ2.Grids.GridColumn { Field = "PIC_E", Width = "170", HeaderText = "E", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                      new Syncfusion.EJ2.Grids.GridColumn { Field = "PIC_S", Width = "170", HeaderText = "S", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                                                                                    } )">
+                    </e-grid-column>
+
+                    <e-grid-column field="FATIGUE" headerText="Fatigue/Strength(PIC)" textAlign="Center" disableHtmlEncode="false" customAttributes=@(new{@class="customCss"}) width="170"></e-grid-column>
+
+                    <e-grid-column field="INSPECTION_DATE_PERIOD" headerText="Inspection Date/Period" disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="220"></e-grid-column>
+                    <e-grid-column field="NEXT_INSPECTION_DUE" headerText="Next Insp Date" customAttributes=@(new{@class="customCss"}) width="170"></e-grid-column>
+                    <e-grid-column field="SURVEY_REPORT" headerText="Survey Report No." disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="180"></e-grid-column>
+
+                    <e-grid-column field="RECEIPT_REPORT" headerText="Receipt of Report(Final)" customAttributes=@(new{@class="customCss"}) width="200"></e-grid-column>
+
+                    <e-grid-column field="MAN_HOUR" headerText="M/H" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                    <e-grid-column field="SR" headerText="SR" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+
+                    <e-grid-column headerText="Rating" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                               columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() { new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_H", Width = "100", HeaderText = "H", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                  new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_M", Width = "100", HeaderText = "M", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                  new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_E", Width = "100", HeaderText = "E", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                  new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_S", Width = "100", HeaderText = "S", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                                                                                } )">
+                    </e-grid-column>
+
+                    @*<e-grid-column field="PRINT" headerText="검수증" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>*@
+                    @*<e-grid-column field="PHOTO" headerText="Photo" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>*@
+                </e-grid-columns>
+            </ejs-grid>
+        </div>
+    </div>
+
+    <script>
+
+        function goInspectionLog(InspectionLogIdx) {
+            if (InspectionLogIdx != "null") {
+                window.location.href = "/SipInspectionLogBook/Detail/" + InspectionLogIdx;
+            }
+            else {
+                alert("아직 로그가 생성되지 않았습니다.");
+            }
+        }
+
+        function setCss(args) {
+            var headerCell = document.querySelectorAll(".e-headercell");
+            for (var i = 0; i < headerCell.length; i++) {
+                console.log(headerCell.item(i));
+                headerCell.item(i).className += 'customCss';
+            }
+        }
+    </script>
+
+}
+
+    @section Scripts{
+    <script src="~/js/customGridFunction.js"></script>
+}

@@ -1,0 +1,628 @@
+﻿@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Notifications
+@model NavesPortalforWebWithCoreMvc.Models.TNAV_CAP_DEFAULT_DB
+
+@{
+    ViewBag.PageTitle = "CAP > Default D/B";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "Default D/B";
+    ViewBag.FunctionName = "Detail";
+}
+
+<style>
+    .set-header {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        padding: 1rem 1rem;
+        border-bottom: 0 solid #dee2e6;
+        border-top-left-radius: 0.2rem;
+        border-top-right-radius: 0.2rem;
+    }
+</style>
+
+@section ContentsSection{
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="ps-2 pageContentTitle">
+            <h3>@ViewBag.MenuName</h3>
+        </div>
+        <div></div>
+    </div>
+
+    <form id="frmCapDefaultDb" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Category</label>
+            <div class="col-sm-4">
+                <ejs-dropdownlist id="dlProjectCagegory" ejs-for="CATEGORY_ID" dataSource="@ViewBag.ProjectCategory" placeholder="Select Category..." cssClass="inputable">
+                    <e-dropdownlist-fields text="Text" value="Value"></e-dropdownlist-fields>
+                </ejs-dropdownlist>
+            </div>
+            <div class="col-6">
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">NSN(NAVES Serial Number)</label>
+            <div class="col-sm-4">
+                <ejs-autocomplete id="acNsnId" dataSource="@ViewBag.NsnDataSource" ejs-for="NSN_ID" placeholder="Select NSN ID..." autofill="true" filterType="Contains"
+                                    cssClass="inputable"
+                                    highlight="true"
+                                    suggestionCount="20"
+                                    minLength="3"
+                                    popupHeight="300px"
+                                    popupWidth="700px"
+                                    headerTemplate="@Html.Raw("<div class=\"row m-2 p-1 fs-5 border-bottom border-2 bg-create-title\"><div class=\"col-2\">NSN ID</div><div class=\"col-3\">Vessel Name</div><div class=\"col-3\">Vessel Type</div><div class=\"col-2\">Ship No.</div></div>")"
+                                    itemTemplate="@Html.Raw("<div class=\"row border-bottom border-1\"><div class=\"col-2\">${NSN_ID}</div><div class=\"col-3\">${VESSEL_NAME_KR}</div><div class=\"col-3\">${VESSEL_TYPE_NAME}</div><div class=\"col-2\">${SHIP_NO}</div></div>")"
+                                    change="OnChangeSelectNsnId">
+                    <e-autocomplete-fields value="NSN_ID"></e-autocomplete-fields>
+                </ejs-autocomplete>
+            </div>
+            <div class="col-6">
+                <label id="lblNsn" class="col-form-label text-right">@ViewBag.NsnText</label>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Job ID</label>
+            <div class="col-sm-4">
+                <ejs-textbox type="text" ejs-for="JOB_ID" id="txtJobId" cssClass="e-outline text-left inputable" placeholder="JOB ID..."></ejs-textbox>
+            </div>
+            <div class="col-6">
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Vessel's Nave/Description</label>
+            <div class="col-sm-4">
+                <ejs-textbox type="text" id="txtDescription" ejs-for="DESCRIPTION" cssClass="e-outline text-left inputable" placeholder="Vessel's Nave/Description..."></ejs-textbox>
+            </div>
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Quantity</label>
+            <div class="col-sm-2">
+                <ejs-numerictextbox id="txtQuantity" min="0" format="###,###,###" ejs-for="QUANTITY_AMOUNT" cssClass="e-outline text-left inputable" placeholder="Quantity..."></ejs-numerictextbox>
+            </div>
+            <div class="col-sm-2">
+                <ejs-dropdownlist id="dlquntype" ejs-for="QUANTITY_TYPE" dataSource="@ViewBag.QuantityType" placeholder="Select Type..." popupHeight="220px" cssClass="inputable">
+                    <e-dropdownlist-fields text="Text" value="Value"></e-dropdownlist-fields>
+                </ejs-dropdownlist>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Latest Inspection Date</label>
+            <div class="col-sm-4">
+                <ejs-datepicker id="dpLatestInspectionDate" ejs-for="LATEST_INSPECTION_DATE" format="yyyy-MM-dd" cssClass="e-outline text-left inputable" placeholder="Latest Inspection Date..."></ejs-datepicker>
+            </div>
+            <div class="col-sm-2 d-flex justify-content-end">
+                <span> : 검사주기 </span>
+            </div>
+            <div class="col-sm-2">
+                <ejs-numerictextbox ejs-for="INSPECTION_INTERVAL" min="0" format="###,###,###" id="txtInspectionInterval" cssClass="e-outline text-left inputable" placeholder="Inspection Interval..."></ejs-numerictextbox>
+            </div>
+            <div class="col-sm-1">
+                <span>Years</span>
+            </div>
+            <div class="col-sm-1 text-end">
+                <button type="button" class="btn btn-purple btn-custom rounded-pill waves-effect waves-light" id="btnmodal" onclick="OpenModalSetTerm();">Set Term</button>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Inspection Date / Period</label>
+            <div class="col-sm-1 d-flex justify-content-end">
+                <span> From </span>
+            </div>
+            <div class="col-sm-3">
+                <ejs-datepicker id="dpStartDate" ejs-for="INSPECTION_PERIOD_START_DATE" format="yyyy-MM-dd" cssClass="inputable" placeholder="N/A"></ejs-datepicker>
+            </div>
+            <div class="col-sm-2 d-flex justify-content-end">
+                <span> To </span>
+            </div>
+            <div class="col-sm-3">
+                <ejs-datepicker id="dpEndDate" ejs-for="INSPECTION_PERIOD_END_DATE" format="yyyy-MM-dd" cssClass="inputable" placeholder="Inspection Date..."></ejs-datepicker>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">SI object's Delivery Date</label>
+            <div class="col-sm-4">
+                <ejs-datepicker id="dpDeliveryDate" ejs-for="SI_OBJECT_DELIVERY_DATE" format="yyyy-MM-dd" cssClass="e-outline text-left inputable" placeholder="SI object's Delivery Date..."></ejs-datepicker>
+            </div>
+            <div class="col-2 d-flex justify-content-end">
+                <span> Service Life </span>
+            </div>
+            <div class="col-sm-1">
+                <ejs-numerictextbox id="txtServiceLife" ejs-for="SERVICE_LIFE" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="Service Life..."></ejs-numerictextbox>
+            </div>
+            <div class="col-sm-3">
+                <span>Years</span>
+                &nbsp;:&emsp;
+                <span>@ViewBag.ServiceLifeText</span>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Surveyor (PIC)</label>
+            <div class="col-sm-4">
+                <ejs-autocomplete id="acPicUser" dataSource="@ViewBag.UserList" placeholder="Select PIC..." autofill="true" filterType="Contains"
+                                    cssClass="inputable"
+                                    highlight="true"
+                                    suggestionCount="20"
+                                    minLength="3"
+                                    popupHeight="300px"
+                                    popupWidth="600px"
+                                    headerTemplate="@Html.Raw("<div class=\"row m-2 p-1 fs-5 border-bottom border-2 bg-create-title\"><div class=\"col-4\">Dept.</div><div class=\"col-3\">User Name</div><div class=\"col-3\">SUR No.</div></div>")"
+                                    itemTemplate="@Html.Raw("<div class=\"row border-bottom border-1\"><div class=\"col-4\">${DEPT_NAME}</div><div class=\"col-3\">${USER_NAME_E}</div><div class=\"col-3\">${SUR_NO}</div></div>")"
+                                    change="OnChangeSelectPic">
+                    <e-autocomplete-fields value="USER_NAME_E"></e-autocomplete-fields>
+                </ejs-autocomplete>
+            </div>
+            <div class="col-6">
+                <ul id="pic" class="list-group list-group-horizontal">
+                    @{
+                        foreach (TNAV_CAP_DEFAULT_DB_PIC pic in ViewBag.Pic)
+                        {
+                            <li name="pic" class="list-group-item m-1 p-0 border-0 @pic.SUR_NO">
+                                <span class="fw-bold">@pic.USRE_NAME_EN&nbsp;&nbsp;&nbsp;</span>
+                                <span>[@pic.SUR_NO]&nbsp;&nbsp;&nbsp;</span>
+                                <span class="fe-delete delete-icon" onclick="OnClickDelete('@pic.SUR_NO', 'pic')"></span>
+                                <input type="text" class="d-none" name="DEFAULT_PIC" value="@pic.EMP_ID" />
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Inspection Place</label>
+            <div class="col-4">
+                <ejs-textbox type="text" id="txtInspectionplace" ejs-for="INSPECTION_PLACE" cssClass="e-outline text-left inputable" placeholder="Inspection Place..."></ejs-textbox>
+            </div>
+        </div>
+
+        <div class="mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Final Technical Report</label>
+            <div class="col-sm-10 py-1">
+                <div class="row d-none">
+                    <span>Final Technical Report(Writable & PDF)</span>
+                </div>
+                <div id="FileListFinalTechnicalReport">
+                    <partial name="~/Views/CapUploader/_Pv_UploadedFileList.cshtml" model="@ViewBag.FileListFinalTechnicalReport" />
+                </div>
+                <div id="divFinalTechnicalReport" class="pt-1">
+                    @{
+                        var asyncSettingsFinalTechnicalReport = new Syncfusion.EJ2.Inputs.UploaderAsyncSettings { SaveUrl = @Url.Content("~/CapDefaultDbFileUpload/SaveUploadFilesFinalTechnicalReport"), RemoveUrl = @Url.Content("~/CapDefaultDbFileUpload/RemoveUploadFilesFinalTechnicalReport"), };
+                    }
+                    <ejs-uploader id="UploadFilesFinalTechnicalReport" asyncSettings="@asyncSettingsFinalTechnicalReport"
+                              autoUpload="false"
+                              multiple="true"
+                              maxFileSize="2147483648"
+                              uploading="OnFileUploadingFinalTechnicalReport"
+                              selected="OnFileSelectedFinalTechnicalReport"
+                              removing="OnFileRemovingFinalTechnicalReport"
+                              success="OnUploadSuccessFinalTechnicalReport"
+                              allowedExtensions="image/*, .pdf">
+                    </ejs-uploader>
+                    <script>
+                        function OnFileSelectedFinalTechnicalReport(args) {
+                            for (var i = 0; i < args.filesData.length; i++) {
+                                args.filesData[i].name = "@Model.CAP_DEFAULT_DB_IDX" + "__" + "@DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")" + "__" + args.filesData[i].name;
+                            }
+                            args.isModified = true;
+                        }
+
+                        function OnFileUploadingFinalTechnicalReport(args) {
+                            args.customFormData = [
+                                { 'PlatformName': 'CAP' },
+                                { 'CurrentDocIdx': "@Model.CAP_DEFAULT_DB_IDX" },
+                                { 'Type': 'FinalTechnicalReport' },
+                                { 'ReleatedInfo': "@String.Empty" },
+                                { 'OriginalFileName': args.fileData.id },
+                                { 'SavedFileName': args.fileData.name },
+                                { 'ProjectIdx': "@String.Empty" },
+                                { 'ProjectId': "@String.Empty" },
+                                { 'WorkIdx': "@String.Empty" },
+                                { 'WorkId': "@String.Empty" },
+                                { 'CreateUserName': "@ViewBag.UserName" }
+                            ];
+                        }
+
+                        function OnFileRemovingFinalTechnicalReport(args) {
+                            args.customFormData = [
+                                { 'PlatformName': 'CAP' },
+                                { 'CurrentDocIdx': "@Model.CAP_DEFAULT_DB_IDX" },
+                                { 'Type': 'FinalTechnicalReport' },
+                                { 'ReleatedInfo': "@String.Empty" },
+                                { 'OriginalFileName': args.filesData[0].id },
+                                { 'SavedFileName': args.filesData[0].name },
+                                { 'ProjectIdx': "@String.Empty" },
+                                { 'ProjectId': "@String.Empty" },
+                                { 'WorkIdx': "@String.Empty" },
+                                { 'WorkId': "@String.Empty" },
+                                { 'CreateUserName': "@ViewBag.UserName" }
+                            ];
+                        }
+
+                        function OnUploadSuccessFinalTechnicalReport(args) {
+                            if (CheckUploadFinishById("UploadFilesFinalTechnicalReport") && $("#hdIsClickSave").val() == "Y") {
+                                if (CheckAllUploadFinish()) {
+                                    UpdateDefaultDb();
+                                }
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Attachment</label>
+            <div class="col-sm-10 py-1">
+                <div class="row d-none">
+                    <span>Photo, Movie & References</span>
+                </div>
+                <div id="FileListPhotoMovie">
+                    <partial name="~/Views/CapUploader/_Pv_UploadedFileList.cshtml" model="@ViewBag.FileListPhotoMovie" />
+                </div>
+                <div id="divInspectionCertificate" class="pt-1">
+                    @{
+                        var asyncSettingsPhotoMovie = new Syncfusion.EJ2.Inputs.UploaderAsyncSettings { SaveUrl = @Url.Content("~/CapDefaultDbFileUpload/SaveUploadFilesPhotoMovie"), RemoveUrl = @Url.Content("~/CapDefaultDbFileUpload/RemoveUploadFIlesPhotoMovie"), };
+                    }
+                    <ejs-uploader id="UploadFilesPhotoMovie" asyncSettings="@asyncSettingsPhotoMovie"
+                              autoUpload="false"
+                              multiple="true"
+                              maxFileSize="2147483648"
+                              uploading="OnFileUploadingPhotoMovie"
+                              selected="OnFileSelectedPhotoMovie"
+                              removing="OnFileRemovingPhotoMovie"
+                              success="OnUploadSuccessPhotoMovie"
+                              allowedExtensions="image/*, .pdf">
+                    </ejs-uploader>
+                    <script>
+                        function OnFileSelectedPhotoMovie(args) {
+                            for (var i = 0; i < args.filesData.length; i++) {
+                                args.filesData[i].name = "@Model.CAP_DEFAULT_DB_IDX" + "__" + "@DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")" + "__" + args.filesData[i].name;
+                            }
+                            args.isModified = true;
+                        }
+
+                        function OnFileUploadingPhotoMovie(args) {
+                            args.customFormData = [
+                                { 'PlatformName': 'CAP' },
+                                { 'CurrentDocIdx': "@Model.CAP_DEFAULT_DB_IDX" },
+                                { 'Type': 'PhotoMovie' },
+                                { 'ReleatedInfo': "@String.Empty" },
+                                { 'OriginalFileName': args.fileData.id },
+                                { 'SavedFileName': args.fileData.name },
+                                { 'ProjectIdx': "@String.Empty" },
+                                { 'ProjectId': "@String.Empty" },
+                                { 'WorkIdx': "@String.Empty" },
+                                { 'WorkId': "@String.Empty" },
+                                { 'CreateUserName': "@ViewBag.UserName" }
+                            ];
+                        }
+
+                        function OnFileRemovingPhotoMovie(args) {
+                            args.customFormData = [
+                                { 'PlatformName': 'CAP' },
+                                { 'CurrentDocIdx': "@Model.CAP_DEFAULT_DB_IDX" },
+                                { 'Type': 'PhotoMovie' },
+                                { 'ReleatedInfo': "@String.Empty" },
+                                { 'OriginalFileName': args.filesData[0].id },
+                                { 'SavedFileName': args.filesData[0].name },
+                                { 'ProjectIdx': "@String.Empty" },
+                                { 'ProjectId': "@String.Empty" },
+                                { 'WorkIdx': "@String.Empty" },
+                                { 'WorkId': "@String.Empty" },
+                                { 'CreateUserName': "@ViewBag.UserName" }
+                            ];
+                        }
+
+                        function OnUploadSuccessPhotoMovie(args) {
+                            if (CheckUploadFinishById("UploadFilesPhotoMovie") && $("#hdIsClickSave").val() == "Y") {
+                                if (CheckAllUploadFinish()) {
+                                    UpdateDefaultDb();
+                                }
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-none">
+            <input type="hidden" id="hdIsClickSave" />
+            <input type="hidden" asp-for="CAP_DEFAULT_DB_IDX" />
+        </div>
+    </form>
+
+    <div class="pt-2 mx-0">
+        <div class="float-start row g-0">
+            <div class="col-auto pe-2">
+            </div>
+            <div class="col-auto pe-2">
+            </div>
+            <div class="col-auto">
+            </div>
+        </div>
+        <div class="float-end row g-0">
+            <div class="col-auto pe-2">
+                <a id="btnSave" onclick="CheckSaveValidation();" class="btn btn-primary btn-medium rounded-pill waves-effect waves-light">SAVE</a>
+            </div>
+            <div class="col-auto pe-2">
+                <a asp-controller="CapDefaultDb" asp-action="Index" id="btnList" class="btn btn-primary rounded-pill waves-effect waves-light btn-medium">LIST</a>
+            </div>
+            <div class="col-auto">
+                <input type="button" id="btnDelete" value="DELETE" onclick="DeleteDefaultDb();" class="btn btn-danger btn-medium rounded-pill waves-effect waves-light" />
+            </div>
+        </div>
+    </div>
+
+    <div id="PartialViews">
+        @await Html.PartialAsync("~/Views/CapDefaultDb/_Partial/_SetTermModalPartialView.cshtml")
+    </div>
+
+    <script>
+        function OnChangeSelectNsnId(args) {
+            if ($("#acNsnId").is(":focus") == false) {
+                return;
+            }
+
+            if (args.value.length >= 3) {
+                var acNsnId = document.getElementById('acNsnId').ej2_instances[0];
+                var nsnText = acNsnId.itemData.VESSEL_NAME_KR + "  " + acNsnId.itemData.VESSEL_CATEGORY_NAME
+                $("#lblNsn").text(nsnText);
+            }
+        }
+
+        function OnChangeSelectPic(args) {
+            var acPicUser = document.getElementById('acPicUser').ej2_instances[0];
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("SelectUser")",
+                data: { "USER_NAME_E": args.value },
+                success: function (response) {
+                    if (response != null) {
+                        //$("#pic").append("<li name=\"pic\" class=\"list-group-item m-1 p-0 border-0 " + response.suR_NO +
+                        //    "\"><span class=\"fw-bold\">" + response.useR_NAME_E +
+                        //    "&nbsp;&nbsp;&nbsp;</span><span>[" + response.suR_NO +
+                        //    "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDelete('" + response.suR_NO +
+                        //    "', 'pic')\"></span><input type=\"text\" class=\"d-none\" name=\"DEFAULT_PIC\" value=\"" + response.emP_ID + "\"\/></li>");
+                        $("#pic").append("<li name=\"pic\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                            "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                            "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                            "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDelete('" + response.SUR_NO +
+                            "', 'pic')\"></span><input type=\"text\" class=\"d-none\" name=\"DEFAULT_PIC\" value=\"" + response.EMP_ID + "\"\/></li>");
+                        acPicUser.value = null;
+                    }
+                },
+                error: function (req, status, error) {
+                }
+            });
+        }
+
+        function OnClickDelete(args, user) {
+            $("#" + user + " > ." + args).remove();
+        }
+
+        function CheckSaveValidation() {
+            $("#hdIsClickSave").val("Y");
+
+            console.log($("#hdIsClickSave").val());
+
+            if (!CheckAllUploadFinish()) {
+                // File Upload
+                UploadByObjectId("UploadFilesFinalTechnicalReport");
+                UploadByObjectId("UploadFilesPhotoMovie");
+            }
+            else {
+                UpdateDefaultDb();
+            }
+        }
+
+        function UploadByObjectId(uploadObjectId) {
+            var uploadObj = document.getElementById(uploadObjectId).ej2_instances[0];
+            uploadObj.upload(uploadObj.getFilesData());
+        }
+
+        function CheckAllUploadFinish() {
+            var isFinishedAllUpload = false;
+
+            if (CheckUploadFinishById("UploadFilesFinalTechnicalReport")
+                && CheckUploadFinishById("UploadFilesPhotoMovie")) {
+
+                isFinishedAllUpload = true;
+            }
+
+            return isFinishedAllUpload;
+        }
+
+        function CheckUploadFinishById(uploadObjectId) {
+            var uploadObj = document.getElementById(uploadObjectId).ej2_instances[0];
+            var filesData = uploadObj.getFilesData();
+            var uploadedFIles = null;
+            console.log(filesData);
+            uploadedFiles = filesData.filter((m) => m.statusCode == 2);
+            var uploadedCount = 0;
+
+            if (uploadedFiles != null) {
+                uploadedCount = uploadedFiles.length;
+            }
+            
+            if (filesData.length == uploadedCount) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        function UpdateDefaultDb() {
+            if ($("#hdIsClickSave").val() == "Y") {
+                $.ajax({
+                    url: "/CapDefaultDb/UpdateCapDefaultDb",
+                    contentType: "application/x-www-form-urlencoded",
+                    dataType: "json",
+                    type: "post",
+                    data: $("#frmCapDefaultDb").serialize(),
+                    success: function (data) {
+                        if (data != null) {
+                            if (data.result == "OK") {
+                                // 수정 완료 후 Detail로 이동
+                                window.location.href = "/CapDefaultDb/Detail/" + "@Model.CAP_DEFAULT_DB_IDX";
+                            }
+                            else {
+                                alert(data.result);
+                            }
+                        }
+                        else {
+                            alert("리턴값 없음!");
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                        alert("Error");
+                    }
+                });
+            }
+        }
+
+        function DeleteDefaultDb() {
+            if (confirm("삭제하시겠습니까?")) {
+                $.ajax({
+                    url: "/CapDefaultDb/DeleteCapDefaultDB",
+                    contentType: "application/x-www-form-urlencoded",
+                    dataType: "json",
+                    type: "post",
+                    data: $("#frmCapDefaultDb").serialize(),
+                    success: function (data) {
+                        if (data != null) {
+                            if (data.result == "OK") {
+                                // 삭제 완료 후 Index로 이동
+                                window.location.href = "/CapDefaultDb";
+                            }
+                            else {
+                                alert(data.result);
+                            }
+                        }
+                        else {
+                            alert("리턴값 없음!");
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                        alert("Error");
+                    }
+                });
+            }
+        }
+
+        function OpenModalSetTerm() {
+            BindServiceLife();
+
+            dialogObj_SetTerm.show();
+        }
+
+        // 모달 데이터 바인딩
+        function BindServiceLife() {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetSetTerm")",
+                success: function (data) {
+                    if (data != null) {
+                        if (data.result != null) {
+                            if (data.result == "OK") {
+                                console.log(data.categoryData);
+                                // 데이터 바인딩
+                                var txtGcaServiceLife = document.getElementById("txtGcaServiceLifeSerTermModal").ej2_instances[0];
+                                var txtNcaServiceLife = document.getElementById("txtNcaServiceLifeSerTermModal").ej2_instances[0];
+                                var txtPcaServiceLife = document.getElementById("txtPcaServiceLifeSerTermModal").ej2_instances[0];
+                                var txtScaServiceLife = document.getElementById("txtScaServiceLifeSerTermModal").ej2_instances[0];
+
+                                var gcaCategory = data.categoryData.find((m) => m.CATEGORY_ID == "GCA");
+                                var ncaCategory = data.categoryData.find((m) => m.CATEGORY_ID == "NCA");
+                                var pcaCategory = data.categoryData.find((m) => m.CATEGORY_ID == "PCA");
+                                var scaCategory = data.categoryData.find((m) => m.CATEGORY_ID == "SCA");
+
+                                if (txtGcaServiceLife != null) {
+                                    if (gcaCategory != null) {
+                                        txtGcaServiceLife.value = gcaCategory.INSPECTION_INTERVAL;
+                                    }
+                                }
+
+                                if (txtNcaServiceLife != null) {
+                                    if (ncaCategory != null) {
+                                        txtNcaServiceLife.value = ncaCategory.INSPECTION_INTERVAL;
+                                    }
+                                }
+
+                                if (txtPcaServiceLife != null) {
+                                    if (pcaCategory != null) {
+                                        txtPcaServiceLife.value = pcaCategory.INSPECTION_INTERVAL;
+                                    }
+                                }
+
+                                if (txtScaServiceLife != null) {
+                                    if (scaCategory != null) {
+                                        txtScaServiceLife.value = scaCategory.INSPECTION_INTERVAL;
+                                    }
+                                }
+                            }
+                            else {
+                                if (data.result == "ERROR") {
+                                    alert(data.message);
+                                }
+                                else {
+                                    alert("ERROR");
+                                }
+                            }
+                        }
+                        else {
+                            alert("Empty : data result");
+                        }
+                    }
+                    else {
+                        alert("Empty : data");
+                    }
+                },
+                error: function (data) {
+                    alert("Error : " + data.value);
+                    //alert(data);
+                }
+            });
+        }
+
+        // 첨부된 파일 삭제
+        function OnClickFileDeleteCap(DeleteFileIdx, DoucmentIdx, KindOfFiles) {
+            //if (confirm("파일을 삭제하시겠습니까?")) {
+            if (confirm("Are you sure you want to delete the attached file?\nIf you delete it, it will also be deleted from the server.!!")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Uploader/Delete",
+                    data: { "Idx": DeleteFileIdx },
+                    dataType: "json",
+                    success: function (data) {
+                        if ("OK" === data) {
+                            // 첨부파일 목록 갱신
+                            $("#FileList" + KindOfFiles).load("/CapUploader/PartialFileList/?Id=" + DoucmentIdx + "&KindOfFiles=" + KindOfFiles);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        alert("ERROR");
+                        //console.log(xhr);
+                        //console.log(status);
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+@section Scripts{
+    <script>
+    </script>
+}
+

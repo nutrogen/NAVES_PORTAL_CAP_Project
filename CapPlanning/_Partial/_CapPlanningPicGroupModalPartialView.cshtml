@@ -1,0 +1,823 @@
+﻿@using Syncfusion.EJ2;
+@using Syncfusion.EJ2.Notifications;
+@using Syncfusion.EJ2.QueryBuilder;
+
+@model NavesPortalforWebWithCoreMvc.ViewModels.PlanningViewModel
+@{
+    var Modalanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Fade };
+    var CloseButton_CapPlanningGroup = new
+    {
+        content = "CLOSE"
+    };
+
+    var SaveButton_CapPlanningGroup = new
+    {
+        content = "SAVE",
+        isPrimary = true
+    };
+}
+
+<ejs-dialog id="modal_dialog_CapPlanningGroup" animationSettings="Modalanimation" width="1280px" height="400px"
+            target="#content-page"
+            open="dialogOpen_CapPlanningGroup"
+            close="dialogClose_CapPlanningGroup"
+            header="PIC & Work Plan Selected"
+            isModal="true"
+            visible="false"
+            allowDragging="true"
+            showCloseIcon="true"
+            created="modalCreated_CapPlanningGroup">
+    @*<e-dialog-position X="600"> </e-dialog-position>*@
+    <e-content-template>
+        <form id="frmCapPlanningPicGroup" method="post">
+            <div class="mx-3 mt-1 row border-bottom border-top">
+                <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-end">PIC <br />Selection</label>
+                <div class="col-sm-11">
+                    <div class="row border-bottom border-end">
+                        <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title border-end">Fatigue/Strength</label>
+                        <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-end">
+                            <input type="checkbox" id="IS_PIC_FATIGUE" name="IS_PIC_FATIGUE" value="true" checked onclick="return false;"> NA
+                        </label>
+
+                        <div class="col-sm-9 row">
+                            <div class="col-sm-4 align-self-center">
+                                <ejs-dropdownlist id="acPicUserFatigue" dataSource="@ViewBag.PicFatigue" cssClass="inputable" placeholder="Select PIC..." select="OnChangeSelectPicFatigueAfter">
+                                    <e-dropdownlist-fields text="Name" value="Value"></e-dropdownlist-fields>
+                                </ejs-dropdownlist>
+                            </div>
+                            <div class="col-sm-8">
+                                <ul id="picFatigue" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row border-bottom border-end">
+                        <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title border-end">Hull</label>
+                        <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-end">
+                            <input type="checkbox" id="IS_PIC_HULL" name="IS_PIC_HULL" value="1" checked onclick="return false;"> NA
+                        </label>
+
+                        <div class="col-sm-9 row">
+                            <div class="col-sm-4 align-self-center">
+                                <ejs-dropdownlist id="acPicUserHull" dataSource="@ViewBag.PicHull" cssClass="inputable" placeholder="Select PIC..." select="OnChangeSelectPicHullAfter">
+                                    <e-dropdownlist-fields text="Name" value="Value"></e-dropdownlist-fields>
+                                </ejs-dropdownlist>
+                            </div>
+                            <div class="col-sm-8">
+                                <ul id="picHull" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row border-bottom border-end">
+                        <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title border-end">Machinery</label>
+                        <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-end">
+                            <input type="checkbox" id="IS_PIC_MACHINERY" name="IS_PIC_MACHINERY" value="1" checked onclick="return false;"> NA
+                        </label>
+
+                        <div class="col-sm-9 row">
+                            <div class="col-sm-4 align-self-center">
+                                <ejs-dropdownlist id="acPicUserMachinery" dataSource="@ViewBag.PicMachinery" cssClass="inputable" placeholder="Select PIC..." select="OnChangeSelectPicMachineryAfter">
+                                    <e-dropdownlist-fields text="Name" value="Value"></e-dropdownlist-fields>
+                                </ejs-dropdownlist>
+                            </div>
+                            <div class="col-sm-8">
+                                <ul id="picMachinery" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row border-bottom border-end">
+                        <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title border-end">Electric</label>
+                        <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-end">
+                            <input type="checkbox" id="IS_PIC_ELECTRIC" name="IS_PIC_ELECTRIC" value="1" checked onclick="return false;"> NA
+                        </label>
+
+                        <div class="col-sm-9 row">
+                            <div class="col-sm-4 align-self-center">
+                                <ejs-dropdownlist id="acPicUserElectric" dataSource="@ViewBag.PicElectric" cssClass="inputable" placeholder="Select PIC..." select="OnChangeSelectPicElectricAfter">
+                                    <e-dropdownlist-fields text="Name" value="Value"></e-dropdownlist-fields>
+                                </ejs-dropdownlist>
+                            </div>
+                            <div class="col-sm-8">
+                                <ul id="picElectric" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row border-bottom border-end">
+                        <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title border-end">Safety</label>
+                        <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-end">
+                            <input type="checkbox" id="IS_PIC_SAFETY" name="IS_PIC_SAFETY" value="1" checked onclick="return false;"> NA
+                        </label>
+
+                        <div class="col-sm-9 row">
+                            <div class="col-sm-4 align-self-center">
+@*                                <ejs-autocomplete id="acPicUserSafety" dataSource="@ViewBag.UserList" placeholder="Select PIC..." autofill="true" filterType="Contains"
+                                                  cssClass="inputable"
+                                                  highlight="true"
+                                                  suggestionCount="20"
+                                                  minLength="3"
+                                                  popupHeight="300px"
+                                                  popupWidth="600px"
+                                                  headerTemplate="@Html.Raw("<div class=\"row m-2 p-1 fs-5 border-bottom border-2 bg-create-title\"><div class=\"col-4\">Dept.</div><div class=\"col-3\">User Name</div><div class=\"col-3\">SUR No.</div></div>")"
+                                                  itemTemplate="@Html.Raw("<div class=\"row border-bottom border-1\"><div class=\"col-4\">${DEPT_NAME}</div><div class=\"col-3\">${USER_NAME_E}</div><div class=\"col-3\">${SUR_NO}</div></div>")"
+                                                  change="OnChangeSelectPicSafety">
+                                    <e-autocomplete-fields value="USER_NAME_E"></e-autocomplete-fields>
+                                </ejs-autocomplete>*@
+
+                                <ejs-dropdownlist id="acPicUserSafety" dataSource="@ViewBag.PicSafety" cssClass="inputable" placeholder="Select PIC..." select="OnChangeSelectPicSafetyAfter">
+                                    <e-dropdownlist-fields text="Name" value="Value"></e-dropdownlist-fields>
+                                </ejs-dropdownlist>
+                            </div>
+                            <div class="col-sm-8">
+                                <ul id="picSafety" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mx-3 row border-bottom align-content-center border-end">
+                <label class="col-4 col-form-label text-end fw-bolder bg-create-title">Work Plan Period (Planned)</label>
+                <div class="col-3 align-self-center">
+                    <ejs-datepicker id="dpInspectionPeriodStart" ejs-for="INSPECTION_PERIOD_START" format="yyyy-MM-dd" cssClass="inputable" placeholder="From"></ejs-datepicker>
+                </div>
+                <div class="col-3 align-self-center">
+                    <ejs-datepicker id="dpInspectionPeriodEnd" ejs-for="INSPECTION_PERIOD_END" format="yyyy-MM-dd" cssClass="inputable" placeholder="To"></ejs-datepicker>
+                </div>
+                <div class="col-2 align-self-center align-content-end">
+                    <a href="#" onclick="ReferSSM();" class="btn btn-purple btn-custom rounded-pill waves-effect waves-light" style="width:100px;">Refer SSM</a>
+                </div>
+            </div>
+        </form>
+    </e-content-template>
+    <e-dialog-buttons>
+        @*<e-dialog-dialogbutton buttonModel="SaveButton_CapPlanningGroup" click="dlgBtnSaveClick_CapPlanningGroup"></e-dialog-dialogbutton>*@
+        <e-dialog-dialogbutton buttonModel="CloseButton_CapPlanningGroup" click="dlgBtnCloseClick_CapPlanningPicGroup"></e-dialog-dialogbutton>
+    </e-dialog-buttons>
+</ejs-dialog>
+
+<script>
+    var dialogObj_CapPlanningGroup;
+    //var dialogOpenBtn_CapPlanningGroup = document.getElementById('btnModalOpen_CapPlanningGroup');
+
+    //dialogOpenBtn_CapPlanningGroup.addEventListener('click', function () {
+    //    dialogObj_CapPlanningGroup.show();
+    //});
+
+    function modalCreated_CapPlanningGroup() {
+        dialogObj_CapPlanningGroup = this;
+    }
+
+    function dialogClose_CapPlanningGroup() {
+        //InitPlanningInfo();
+
+        closeDialog();
+
+        dialogObj_CapPlanningGroup.style.display = 'block';
+    }
+
+    function dialogOpen_CapPlanningGroup() {
+        //dialogBtn.style.display = 'none';
+
+        //$("#lblDescription").text($("#hdDesc").val());
+
+        //var workId = $("#hdWorkId").val();
+        //$("#hdModalWorkId").val(workId);
+
+        //GetWorkInfo(workId);
+    }
+
+    function dlgBtnCloseClick_CapPlanningPicGroup() {
+        dialogObj_CapPlanningGroup.hide();
+    }
+
+    /*
+    function dlgBtnSaveClick_CapPlanningGroup() {
+
+        //SaveCapPlanningGroup();
+
+        //dialogObj_CapPlanningGroup.hide();
+    }
+    */
+
+    function OnChangeSelectPicFatigueAfter(args) {
+        var acPicUserFatigue = document.getElementById('acPicUserFatigue').ej2_instances[0];
+
+        OnChangeSelectPicFatigue(args, 'After');
+
+        setTimeout(function(){
+            if (document.getElementById('acPicUserFatigue').ej2_instances[0].list) {
+                document.getElementById('acPicUserFatigue').ej2_instances[0].list.querySelectorAll('li').forEach((value, index) => {
+                    $(value).remove();
+                });
+            }
+
+            acPicUserFatigue.index = 0;
+            acPicUserFatigue.value = null;
+        }, 50)
+    }
+
+    function OnChangeSelectPicHullAfter(args) {
+        var acPicUserHull = document.getElementById('acPicUserHull').ej2_instances[0];
+
+        OnChangeSelectPicHull(args, 'After');
+
+        setTimeout(function(){
+            if (document.getElementById('acPicUserHull').ej2_instances[0].list) {
+                document.getElementById('acPicUserHull').ej2_instances[0].list.querySelectorAll('li').forEach((value, index) => {
+                    $(value).remove();
+                });
+            }
+
+            acPicUserHull.index = 0;
+            acPicUserHull.value = null;
+        }, 50)
+    }
+
+    function OnChangeSelectPicMachineryAfter(args) {
+        var acPicUserMachinery = document.getElementById('acPicUserMachinery').ej2_instances[0];
+
+        OnChangeSelectPicMachinery(args, 'After');
+
+        setTimeout(function(){
+            if (document.getElementById('acPicUserMachinery').ej2_instances[0].list) {
+                document.getElementById('acPicUserMachinery').ej2_instances[0].list.querySelectorAll('li').forEach((value, index) => {
+                    $(value).remove();
+                });
+            }
+
+            acPicUserMachinery.index = 0;
+            acPicUserMachinery.value = null;
+        }, 50)
+    }
+
+    function OnChangeSelectPicElectricAfter(args) {
+        var acPicUserElectric = document.getElementById('acPicUserElectric').ej2_instances[0];
+
+        OnChangeSelectPicElectric(args, 'After');
+
+        setTimeout(function(){
+            if (document.getElementById('acPicUserElectric').ej2_instances[0].list) {
+                document.getElementById('acPicUserElectric').ej2_instances[0].list.querySelectorAll('li').forEach((value, index) => {
+                    $(value).remove();
+                });
+            }
+
+            acPicUserElectric.index = 0;
+            acPicUserElectric.value = null;
+        }, 50)
+    }
+
+    function OnChangeSelectPicSafetyAfter(args) {
+        var acPicUserSafety = document.getElementById('acPicUserSafety').ej2_instances[0];
+
+        OnChangeSelectPicSafety(args, 'After');
+
+        setTimeout(function(){
+            if (document.getElementById('acPicUserSafety').ej2_instances[0].list) {
+                document.getElementById('acPicUserSafety').ej2_instances[0].list.querySelectorAll('li').forEach((value, index) => {
+                    $(value).remove();
+                });
+            }
+
+            acPicUserSafety.index = 0;
+            acPicUserSafety.value = null;
+        }, 50)
+    }
+
+    function OnChangeSelectPicFatigue(args, flag) {
+        var acPicUserFatigue = document.getElementById('acPicUserFatigue').ej2_instances[0];
+
+        //console.log(args.itemData.Value);
+
+        //console.log(args.item);
+        //console.log($("li#5602-1.e-list-item.e-active"));
+
+        //console.log(args);
+        //console.log(args.item);
+        //console.log($(args.item).parent());
+        //console.log($(args.item).parent().attr('id'));
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/CapPlanning/GetSelectedPicInfo",
+            data: { SUR_NO: args.itemData.Value, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                //console.log(response);
+                if (response != null) {
+                    $("#picFatigue").append("<li name=\"picFatigue\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                        "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                        "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                        "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteUser('" + response.SUR_NO +
+                        "', 'picFatigue','" + response.USER_NAME_E + "','acPicUserFatigue')\"></span>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_FATIGUE\" name=\"PLANNING_PIC_FATIGUE\" value=\"" + response.SUR_NO + "\"\/>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_FATIGUE_NAME\" name=\"PLANNING_PIC_FATIGUE_NAME\" value=\"" + response.USER_NAME_E + "\"\/>" +
+                        "</li>");
+                    acPicUserFatigue.value = null;
+
+                    if ($("#picFatigue").children().length == 0) {
+                        $("input:checkbox[id='IS_PIC_FATIGUE']").prop("checked", true);
+                    } else {
+                        $("input:checkbox[id='IS_PIC_FATIGUE']").prop("checked", false);
+                    }
+
+                    acPicUserFatigue.dataSource.forEach((value, index) => {
+                        if (response.SUR_NO == value.Value) {
+                            acPicUserFatigue.dataSource.splice(index, 1);
+                            acPicUserFatigue.value = null;
+                            acPicUserFatigue.refresh();
+                        }
+                    });
+
+                    acPicUserFatigue.refresh();
+                }
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function OnChangeSelectPicHull(args) {
+        var acPicUserHull = document.getElementById('acPicUserHull').ej2_instances[0];
+        //console.log(args.itemData.Value);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/CapPlanning/GetSelectedPicInfo",
+            data: { SUR_NO: args.itemData.Value, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                //console.log(response);
+                if (response != null) {
+                    $("#picHull").append("<li name=\"picHull\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                        "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                        "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                        "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteUser('" + response.SUR_NO +
+                        "', 'picHull','" + response.USER_NAME_E + "','acPicUserHull')\"></span>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_HULL\" name=\"PLANNING_PIC_HULL\" value=\"" + response.SUR_NO + "\"\/>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_HULL_NAME\" name=\"PLANNING_PIC_HULL_NAME\" value=\"" + response.USER_NAME_E + "\"\/>" +
+                        "</li>");
+                    acPicUserHull.value = null;
+
+                    if ($("#picHull").children().length == 0) {
+                        $("input:checkbox[id='IS_PIC_HULL']").prop("checked", true);
+                    } else {
+                        $("input:checkbox[id='IS_PIC_HULL']").prop("checked", false);
+                    }
+
+                    var deleteIndex = 0;
+                    acPicUserHull.dataSource.forEach((value, index) => {
+                        if (response.SUR_NO == value.Value) {
+                            acPicUserHull.dataSource.splice(index, 1);
+                            acPicUserHull.refresh();
+                        }
+                    });
+                }
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function OnChangeSelectPicMachinery(args) {
+        //console.log(args);
+
+        var acPicUserMachinery = document.getElementById('acPicUserMachinery').ej2_instances[0];
+        //console.log(args.itemData.Value);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/CapPlanning/GetSelectedPicInfo",
+            data: { SUR_NO: args.itemData.Value, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                //console.log(response);
+                if (response != null) {
+                    $("#picMachinery").append("<li name=\"picMachinery\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                        "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                        "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                        "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteUser('" + response.SUR_NO +
+                        "', 'picMachinery','" + response.USER_NAME_E + "','acPicUserMachinery')\"></span>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_MACHINERY\" name=\"PLANNING_PIC_MACHINERY\" value=\"" + response.SUR_NO + "\"\/>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_MACHINERY_NAME\" name=\"PLANNING_PIC_MACHINERY_NAME\" value=\"" + response.USER_NAME_E + "\"\/>" +
+                        "</li>");
+                    acPicUserMachinery.value = null;
+
+                    if ($("#picMachinery").children().length == 0) {
+                        $("input:checkbox[id='IS_PIC_MACHINERY']").prop("checked", true);
+                    } else {
+                        $("input:checkbox[id='IS_PIC_MACHINERY']").prop("checked", false);
+                    }
+
+                    var deleteIndex = 0;
+                    acPicUserMachinery.dataSource.forEach((value, index) => {
+                        if (response.SUR_NO == value.Value) {
+                            acPicUserMachinery.dataSource.splice(index, 1);
+                            acPicUserMachinery.refresh();
+                        }
+                    });
+
+                    if (acPicUserMachinery.list) {
+                        acPicUserMachinery.list.querySelectorAll('li').forEach((value, index) => {
+                            if (response.SUR_NO == $(value).attr("data-value")) { 
+                                $(value).remove();
+
+                                if (!acPicUserMachinery.list.querySelectorAll('li')[0]) {
+                                    acPicUserMachinery.dataSource = [];
+                                    // enable the nodata template when no data source is empty.
+                                    acPicUserMachinery.list.classList.add('e-nodata');
+                                }
+
+                                //acPicUserMachinery = null;
+                                //$("#acPicUserMachinery").attr("aria-expanded", "false");
+                                
+                                //acPicUserMachinery.dataBind()
+                                //acPicUserMachinery.refresh();
+                                console.log($("#acPicUserMachinery_hidden"));
+                            }
+
+                            console.log($(value).attr("data-value"));
+                            console.log(index);
+                            //$(value).remove();
+                        });
+                    }
+                }
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function OnChangeSelectPicElectric(args) {
+        var acPicUserElectric = document.getElementById('acPicUserElectric').ej2_instances[0];
+        //console.log(args.itemData.Value);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/CapPlanning/GetSelectedPicInfo",
+            data: { SUR_NO: args.itemData.Value, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                //console.log(response);
+                if (response != null) {
+                    $("#picElectric").append("<li name=\"picElectric\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                        "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                        "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                        "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteUser('" + response.SUR_NO +
+                        "', 'picElectric','" + response.USER_NAME_E + "','acPicUserElectric')\"></span>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_ELECTRIC\" name=\"PLANNING_PIC_ELECTRIC\" value=\"" + response.SUR_NO + "\"\/>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_ELECTRIC_NAME\" name=\"PLANNING_PIC_ELECTRIC_NAME\" value=\"" + response.USER_NAME_E + "\"\/>" +
+                        "</li>");
+                    acPicUserElectric.value = null;
+
+                    if ($("#picElectric").children().length == 0) {
+                        $("input:checkbox[id='IS_PIC_ELECTRIC']").prop("checked", true);
+                    } else {
+                        $("input:checkbox[id='IS_PIC_ELECTRIC']").prop("checked", false);
+                    }
+
+                    var deleteIndex = 0;
+                    acPicUserElectric.dataSource.forEach((value, index) => {
+                        if (response.SUR_NO == value.Value) {
+                            acPicUserElectric.dataSource.splice(index, 1);
+                            acPicUserElectric.refresh();
+                        }
+                    });
+                }
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function OnChangeSelectPicSafety(args) {
+        var acPicUserSafety = document.getElementById('acPicUserSafety').ej2_instances[0];
+        //console.log(args.itemData.Value);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/CapPlanning/GetSelectedPicInfo",
+            data: { SUR_NO: args.itemData.Value, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                //console.log(response);
+                if (response != null) {
+                    $("#picSafety").append("<li name=\"picSafety\" class=\"list-group-item m-1 p-0 border-0 " + response.SUR_NO +
+                        "\"><span class=\"fw-bold\">" + response.USER_NAME_E +
+                        "&nbsp;&nbsp;&nbsp;</span><span>[" + response.SUR_NO +
+                        "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteUser('" + response.SUR_NO +
+                        "', 'picSafety','" + response.USER_NAME_E + "','acPicUserSafety')\"></span>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_SAFETY\" name=\"PLANNING_PIC_SAFETY\" value=\"" + response.SUR_NO + "\"\/>" +
+                        "<input type=\"text\" class=\"d-none\" id=\"PLANNING_PIC_SAFETY_NAME\" name=\"PLANNING_PIC_SAFETY_NAME\" value=\"" + response.USER_NAME_E + "\"\/>" +
+                        "</li>");
+                    acPicUserSafety.value = null;
+
+                    if ($("#picSafety").children().length == 0) {
+                        $("input:checkbox[id='IS_PIC_SAFETY']").prop("checked", true);
+                    } else {
+                        $("input:checkbox[id='IS_PIC_SAFETY']").prop("checked", false);
+                    }
+
+                    var deleteIndex = 0;
+                    acPicUserSafety.dataSource.forEach((value, index) => {
+                        if (response.SUR_NO == value.Value) {
+                            acPicUserSafety.dataSource.splice(index, 1);
+                            acPicUserSafety.refresh();
+                        }
+                    });
+                }
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function OnClickDeleteUser(args, user, UserName, control) {
+        $("#" + user + " > ." + args).remove();
+
+        //console.log(args);
+        //console.log(user);
+        //console.log(UserName);
+        //console.log(control);
+
+        var id = "";
+
+        if (user == "picFatigue") {
+            id = "IS_PIC_FATIGUE";
+        } else if (user == "picHull") {
+            id = "IS_PIC_HULL";
+        } else if (user == "picMachinery") {
+            id = "IS_PIC_MACHINERY";
+        } else if (user == "picElectric") {
+            id = "IS_PIC_ELECTRIC";
+        } else if (user == "picSafety") {
+            id = "IS_PIC_SAFETY";
+        }
+
+        if ($("#" + user).children().length == 0) {
+            $("input:checkbox[id='" + id + "']").prop("checked", true);
+        } else {
+            $("input:checkbox[id='" + id + "']").prop("checked", false);
+        }
+
+        var Data = {
+            Name: UserName + " (" + args + ")",
+            Value: args,
+            Castcading: null
+        };
+
+        //console.log(Data);
+
+        var _dropdownlist = document.getElementById(control).ej2_instances[0];
+
+        try {
+            _dropdownlist.addItem(Data, 0);
+        } catch(e) { }
+        
+        try {
+            _dropdownlist.dataSource.unshift(Data);
+        } catch(e) { }
+        
+        _dropdownlist.refresh();
+
+    }
+
+    function ReferSSM() {
+        alert("Refer SSM");
+    }
+
+    function Init2() {
+        var acPicUserFatigue = document.getElementById("acPicUserFatigue").ej2_instances[0];
+        acPicUserFatigue = null;
+
+        var dpInspectionPeriodStart = document.getElementById("dpInspectionPeriodStart").ej2_instances[0];
+        dpInspectionPeriodStart.value = null;
+
+        var dpInspectionPeriodEnd = document.getElementById("dpInspectionPeriodEnd").ej2_instances[0];
+        dpInspectionPeriodEnd.value = null;
+    }
+
+    function test2() {
+        alert("test2");
+    }
+
+    // 모달 데이터 바인딩
+    /*
+    function GetWorkInfo(workId) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetPlanDetailInfo")",
+            data: { "workId": workId },
+            success: function (data) {
+                console.log(JSON.stringify(data));
+                //alert(data.result);
+
+                if (data.WORK_GROUP != null) {
+                    $("#lblWorkGroup").text(data.WORK_GROUP);
+                }
+
+                if (data.DESCRIPTION != null) {
+                    $("#lblDescription").text(data.DESCRIPTION);
+                }
+
+                if (data.result == "EXIST") {
+                    // 수정 모드
+
+                    // 객체에 데이터 바인딩 dpplanstart
+
+                    //var startDate = data.INSPECTION_PERIOD_START == null ? "" : data.INSPECTION_PERIOD_START;
+                    //var endDate = data.INSPECTION_PERIOD_END;
+
+                    //var planend = data.INSPECTION_PERIOD_END;
+                    //var enddate = planend.substring(0,10);
+
+                    if (data.INSPECTION_PERIOD_START != null) {
+                        var inspectionPeriodStartDate = data.INSPECTION_PERIOD_START.substring(0, 10);
+                        var objInspectionPeriodStart = document.getElementById("dpInspectionPeriodStart").ej2_instances[0];
+                        objInspectionPeriodStart.value = inspectionPeriodStartDate;
+                    }
+
+                    var inspectionPeriodEndDate = data.INSPECTION_PERIOD_END.substring(0, 10);
+                    //$("#dpInspectionPeriodEnd").val(data.INSPECTION_PERIOD_END.substring(0, 10));
+                    var objInspectionPeriodEnd = document.getElementById("dpInspectionPeriodEnd").ej2_instances[0];
+                    objInspectionPeriodEnd.value = inspectionPeriodEndDate;
+
+                    //$("#txtInspectionPlace").val(data.INSPECTION_PLACE);
+                    //$("#txtQuantity").val(data.QUANTITY_AMOUNT);
+                    //$("#ddlQuantityType").val(data.QUANTITY_TYPE);
+                    //$("#txtRemain").val(data.QUANTITY_REST_AMOUNT);
+
+                    var txtInspectionPlace = document.getElementById("txtInspectionPlace").ej2_instances[0];
+                    txtInspectionPlace.value = data.INSPECTION_PLACE;
+
+                    var txtQuantity = document.getElementById("txtQuantity").ej2_instances[0];
+                    txtQuantity.value = data.QUANTITY_AMOUNT;
+
+                    var ddlQuantityType = document.getElementById("ddlQuantityType").ej2_instances[0];
+                    ddlQuantityType.value = data.QUANTITY_TYPE;
+
+                    var txtRemain = document.getElementById("txtRemain").ej2_instances[0];
+                    txtRemain.value = data.QUANTITY_REST_AMOUNT;
+
+                    $("#hdPlanningWorkIdx").val(data.PLANNING_WORK_IDX);
+
+                    if (data.PICLIST != null) {
+
+                        //alert(JSON.stringify(data.PICLIST));
+
+                        for (var i in data.PICLIST) {
+                            $("#picFatigue").append("<li name=\"picFatigue\" class=\"list-group-item m-1 p-0 border-0 " + data.PICLIST[i].SUR_NO +
+                                "\"><span class=\"fw-bold\">" + data.PICLIST[i].USER_NAME_EN +
+                                "&nbsp;&nbsp;&nbsp;</span><span>[" + data.PICLIST[i].SUR_NO +
+                                "]&nbsp;&nbsp;&nbsp;</span><span class=\"fe-delete delete-icon\" onclick=\"OnClickDeleteUser('" + data.PICLIST[i].SUR_NO +
+                                "', 'picFatigue')\"></span><input type=\"text\" class=\"d-none\" name=\"PLANNING_PIC_FATIGUE\" value=\"" + data.PICLIST[i].SUR_NO + "\"\/></li>");
+                        }
+
+                        //acPicUser.value = null;
+                    }
+                }
+                else {
+                    // 입력 모드
+
+                    $("#hdPlanningWorkIdx").val("");
+
+                    // Desc 바인딩
+                    // data.DESCRIPTION
+                }
+            },
+            error: function (data) {
+                alert("Error : " + data.value);
+                //alert(data);
+            }
+        });
+    }
+    */
+
+    // 입력 항목 초기화 함수
+    /*
+    function InitPlanningInfo() {
+
+        $("#hdWorkId").val("");
+        $("#hdDesc").val();
+        $("#lblDescription").text("");
+        $("#lblWorkGroup").text("");
+        $("#picFatigue").children().remove();
+
+        var acPicUserFatigue = document.getElementById("acPicUserFatigue").ej2_instances[0];
+        acPicUserFatigue = null;
+
+        var dpInspectionPeriodStart = document.getElementById("dpInspectionPeriodStart").ej2_instances[0];
+        dpInspectionPeriodStart.value = null;
+
+        var dpInspectionPeriodEnd = document.getElementById("dpInspectionPeriodEnd").ej2_instances[0];
+        dpInspectionPeriodEnd.value = null;
+
+        var txtInspectionPlace = document.getElementById("txtInspectionPlace").ej2_instances[0];
+        txtInspectionPlace.value = null;
+
+        var txtQuantity = document.getElementById("txtQuantity").ej2_instances[0];
+        txtQuantity.value = null;
+
+        var ddlQuantityType = document.getElementById("ddlQuantityType").ej2_instances[0];
+        ddlQuantityType.value = null;
+
+        var txtRemain = document.getElementById("txtRemain").ej2_instances[0];
+        txtRemain.value = null;
+    }
+    */
+
+    /*
+    function SaveCapPlanningGroup() {
+        if ($("#hdPlanningWorkIdx").val() == "" || $("#hdPlanningWorkIdx").val() == null) {
+            //Create
+            if (confirm("저장하시겠습니까?")) {
+                //alert("create");
+                $.ajax({
+                    url: "/CapPlanning/CapPlanningGroupCreate",
+                    contentType: "application/x-www-form-urlencoded",
+                    dataType: "json",
+                    type: "post",
+                    data: $("#frmCapPlanningGroup").serialize(),
+                    success: function (data) {
+                        if (data != null) {
+                            // 기존 Work 항목에 Plan End Date / Quantity / PIC 항목 입력
+                            var planDate = $("#dpInspectionPeriodEnd").val();
+                            var quantity = $("#txtQuantity").val();
+                            var picFatigue = $("#picFatigue li").find(".fw-bold").text().trim();
+                            var workId = $("#hdModalWorkId").val();
+
+                            //$("#test").val("222");
+                            //console.log($(".e-gridcontent #" + workId).find("td:eq(6)"));
+
+                            $(".e-gridcontent").find("#" + workId).find("td:eq(5)").text(planDate)
+                            $(".e-gridcontent").find("#" + workId).find("td:eq(6)").text(quantity)
+                            $(".e-gridcontent").find("#" + workId).find("td:eq(8)").text(pic)
+
+
+                            //$("#" + workId).find("td:eq(6)").html("1234");
+                            //alert(workId + " | " + planDate + " | " + quantity + " | " + pic);
+                            //alert($("#" + workId).find("td:eq(3)").text() + " | " + $("#" + workId).find("td:eq(4)").text());
+
+                            alert("저장되었습니다.");
+
+                            dialogObj_CapPlanningGroup.hide();
+                        }
+                        else {
+                            alert(data);
+                        }
+                    },
+                    error: function (ata) {
+                        alert("Error");
+                        alert(data);
+                    }
+                });
+            }
+        }
+        else {
+            //Update
+            if (confirm("수정하시겠습니까?")) {
+                //alert("update");
+                $.ajax({
+                    url: "/CapPlanning/CapPlanningGroupEdit",
+                    contentType: "application/x-www-form-urlencoded",
+                    dataType: "json",
+                    type: "post",
+                    data: $("#frmCapPlanningGroup").serialize(),
+                    success: function (data) {
+                        if (data != null) {
+                            //alert("DATA : " + JSON.stringify(data));
+                            //alert("data : " + data );
+                            //AutoList(data);
+
+                            // 기존 Work 항목에 Plan End Date / Quantity / PIC 항목 입력
+                            var planDate = $("#dpInspectionPeriodEnd").val();
+                            var quantity = $("#txtQuantity").val();
+                            var picFatigue = $("#picFatigue li").find(".fw-bold").text().trim();
+                            var workId = $("#hdModalWorkId").val();
+
+                            $(".e-gridcontent").find("#" + workId).find("td:eq(5)").text(planDate)
+                            $(".e-gridcontent").find("#" + workId).find("td:eq(6)").text(quantity)
+                            $(".e-gridcontent").find("#" + workId).find("td:eq(8)").text(pic)
+
+                            alert("수정되었습니다.");
+
+                            dialogObj_CapPlanningGroup.hide();
+                        }
+                        else {
+                            alert("수정이실패했습니다.");
+                        }
+                    },
+                    error: function (data) {
+                        alert("Error");
+                        alert(data);
+                    }
+                });
+            }
+        }
+    }
+    */
+
+</script>

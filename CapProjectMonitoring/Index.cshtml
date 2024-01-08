@@ -1,0 +1,138 @@
+﻿@using Syncfusion.EJ2
+
+@{
+    ViewBag.PageTitle = "CAP > ";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "Project Management Monitoring";
+    ViewBag.FunctionName = "List";
+}
+
+@section SearchSection{
+    @*<div class="row align-items-center">
+        <div class="col-10">
+            <div class="m-2">
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <ejs-textbox id="txtSearchBox" cssClass="e-outline" placeholder="Search Keyword..."></ejs-textbox>
+                    </div>
+                    <div class="col-auto">
+                        Period
+                    </div>
+                    <div class="col-2">
+                        <ejs-datepicker id="dpStartDate" format="yyyy-MM-dd" placeholder="Start Date..."></ejs-datepicker>
+                    </div>
+                    <div class="col-2 datepicker-section">
+                        <ejs-datepicker id="dpEndDate" format="yyyy-MM-dd" placeholder="End Date..."></ejs-datepicker>
+                    </div>
+                    <div class="col-2">
+                        <button asp-controller="CapProjectMonitoring" asp-action="Index" id="Search" type="submit" class="btn btn-purple btn-medium rounded-pill waves-effect waves-light">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="m-2">
+                <div class="row">
+                    <div class="col-6">
+                        <ejs-checkbox id="chkStauts" label="Status" checked="true"></ejs-checkbox>
+                        <ejs-checkbox id="chkProjectID" label="ProjectID" checked="true"></ejs-checkbox>
+                        <ejs-checkbox id="chkJobId" label="JobID" checked="true"></ejs-checkbox>
+                        <ejs-checkbox id="chkVesselName" label="Vessel Name" checked="true"></ejs-checkbox>
+                        <ejs-checkbox id="chkCategory" label="Category" checked="true"></ejs-checkbox>
+                        <ejs-checkbox id="chkSurveyor" label="Surveyor" checked="true"></ejs-checkbox>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="d-flex justify-content-end">
+                <div class="align-self-center">
+                </div>
+            </div>
+        </div>
+    </div>*@
+            <form asp-action="Index" asp-controller="CapProjectMonitoring" method="post">
+            <div class="row align-items-center m-0">
+                <div class="col">
+                    <ejs-textbox id="txtSearchBox" cssClass="e-outline inputable" placeholder="Search Keyword..."></ejs-textbox>
+                </div>
+                <div class="col-auto">
+                    Period
+                </div>
+                <div class="col-2">
+                    <ejs-datepicker id="dpStartDate" value="@ViewBag.StartDate" value="@DateTime.Now.AddYears(-1).ToShortDateString()" format="yyyy-MM-dd" placeholder="Start Date..." cssClass="inputable"></ejs-datepicker>
+                </div>
+                <div class="col-2">
+                    <ejs-datepicker id="dpEndDate" value="@ViewBag.EndDate" value="@DateTime.Now.ToShortDateString()" format="yyyy-MM-dd" placeholder="End Date..." cssClass="inputable"></ejs-datepicker>
+                </div>
+                <div class="col">
+                    <button asp-controller="CapProjectMonitoring" asp-action="Index" id="Search" type="submit" class="btn btn-purple btn-medium rounded-pill waves-effect waves-light">Search</button>
+                </div>
+            </div>
+        </form>
+}
+
+    @section ContentsSection{
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="ps-2">
+                <h3>Project Management</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <ejs-grid id="Grid" dataSource="@ViewBag.DataSource" allowTextWrap="true" enableInfiniteScrolling="true" allowSorting="true" allowExcelExport="true"
+                    height="510"
+                    rowHeight="32"
+                    allowMultiSorting="true"
+                    allowTextWrap="true"
+                    allowResizing="true"
+                    allowReordering="true"
+                    allowSorting="true"
+                    allowFiltering="true"
+                    allowExcelExport="true"
+                    allowPdfExport="true"
+                    allowGrouping="true"
+                    allowPaging="true"
+                    showColumnChooser="true"
+                    toolbar="@( new List<string>() { "ColumnChooser", "ExcelExport", "PdfExport", "CsvExport", "Print"})" >
+                    <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+                    <e-grid-pagesettings pageCount="10" pageSize="15" pageSizes="@(new string[] {"10", "15", "20" , "50", "All" })"></e-grid-pagesettings>
+                    <e-grid-groupSettings enableLazyLoading="true" allowReordering="true" showDropArea="true"></e-grid-groupSettings>
+                    <e-grid-columns>
+                        <e-grid-column field="NO" headerText="No" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="80"></e-grid-column>
+                        <e-grid-column field="PROJECT_STATUS" headerText="Status" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                        <e-grid-column field="PROJECT_ID" headerText="Project ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                        <e-grid-column field="CONTRACT_TITLE" headerText="Contract Title" customAttributes=@(new{@class="customCss"}) width="200"></e-grid-column>
+                        <e-grid-column field="CONTRACT_AMOUNT" type="number" format="C0" textAlign="Center" headerText="Contract Amount" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+                        <e-grid-column field="QUANTITY" headerText="Quantity" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                        <e-grid-column field="PM" headerText="Project Manager (PM)" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                        <e-grid-column field="PIC" headerText="Work Group Surveyor (PIC)" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                        <e-grid-column field="PROJECT_START" headerText="Start" textAlign="Center" format="yyyy-MM-dd" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                        <e-grid-column field="PROJECT_END" headerText="End" textAlign="Center" format="yyyy-MM-dd" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                        <e-grid-column headerText="Project Progress" template="#templateProgress" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="120" ></e-grid-column> 
+                    </e-grid-columns>
+                </ejs-grid>
+            </div> 
+        </div>
+
+        <script>
+            //ej.base.setCulture('ko')
+            //ej.base.setCurrencyCode('WON');
+
+            function goProjectMonitoring(projectIdx) {
+                //alert(projectIdx);
+
+                if (projectIdx != "null") {
+                    window.location.href = "/CapProjectMonitoring/Create/" + projectIdx;
+                }
+                else {
+                    alert("프로젝트 정보가 없습니다.");
+                }
+            }
+        </script>
+
+        <script id="templateProgress" type="text/x-template">
+            <div>
+                ${PROJECT_PROGRESS}&nbsp;&nbsp;<a href=# onclick=goProjectMonitoring('${PROJECT_IDX}');><img src=/images/icons/hand_arrow.png alt=${PROJECT_ID} height=20></a>
+            </div>
+        </script>
+}

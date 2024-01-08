@@ -1,0 +1,52 @@
+﻿@using Syncfusion.EJ2;
+@using Syncfusion.EJ2.Notifications;
+@using Syncfusion.EJ2.QueryBuilder;
+
+<script type="text/html" id="row-template">
+    <div class="PIC-SCHEDULE-IDX-${PIC_SCHEDULE_IDX}">
+        <div class="mx-0 mt-1 row">
+            <div class="col-sm-12" id="PIC-SCHEDULE-IDX-${PIC_SCHEDULE_IDX}" style="border: 1px solid #728fad; ">
+                @*<input type="text" class="d-none" id="PIC_TYPE" name="PIC_TYPE" value="${PIC_TYPE}" />*@
+                <ul id="picList" class="list-group list-group-horizontal" style="display:flex; align-content:flex-start; flex-wrap:wrap;">
+                    <li name="picList" class="list-group-item m-1 p-0 border-0 picList ${INSP_SUR_NO}">
+                        {{each(i, pic) PIC_LIST}}
+                        <span class="fw-bold pic-user-name">${pic.PIC_NAME}&nbsp;&nbsp;&nbsp;</span>
+                        <span class="sur-no">[${pic.PIC}]&nbsp;&nbsp;&nbsp;</span>
+                        {{/each}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mx-0 d-flex border-bottom row">
+            <div class="col-sm-6 align-self-center col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad">
+                Inspection Date/Period(Planned)
+            </div>
+            <div class="col-sm-4 col align-self-center col-form-label bolder-start text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad;">Place</div>
+            <div class="col-sm-2 col align-self-center col-form-label bolder-start text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad; border-right: 1px solid #728fad;">Action</div>
+        </div>
+
+        <div class="mx-0 d-flex border-bottom row">
+            <div class="col-sm-6 align-self-center text-center col-form-label" style="border-left: 1px solid #728fad">
+                <span class="plan-inspection-date-start PLAN_INSPECTION_DATE_START">${PLAN_INSPECTION_DATE_START}</span> &nbsp; ~ &nbsp;
+                <span class="plan-inspection-date-end PLAN_INSPECTION_DATE_END">${PLAN_INSPECTION_DATE_END}</span>
+            </div>
+            <div class="col-sm-4 align-self-center col-form-label" style="border-left: 1px solid #728fad">
+                <span class="pic-inspection-place INSPECTION_PLACE">&nbsp;${INSPECTION_PLACE}&nbsp;</span>
+            </div>
+            <div class="col-sm-2 align-self-center text-center" style="border-left: 1px solid #728fad; border-right: 1px solid #728fad;">
+                <a onclick="setInspScheduleEdit('${PIC_TYPE}', '${PIC_SCHEDULE_IDX}');" id="btnInstEdit" class="btn btn-primary me-0 btn-sm rounded-pill waves-effect waves-light">E d i t</a>
+                <a onclick="setInspScheduleDelete('${PIC_TYPE}', '${PIC_SCHEDULE_IDX}');" id="btnInstEdit" class="btn btn-primary me-0 btn-sm rounded-pill waves-effect waves-light">Delete</a>
+            </div>
+        </div>
+
+        <div class="mx-0 d-flex row" style="border-bottom: 1px solid #728fad;">
+            <div class="col-sm-10 align-self-center col-form-label" style="border-left: 1px solid #728fad">
+                <span class="inspection-descr INSPECTION_DESCR">${INSPECTION_DESCR}&nbsp;</span>
+            </div>
+            <div class="col-sm-2 align-self-center text-center" style="border-left: 1px solid #728fad; border-right: 1px solid #728fad;">
+                <a onclick="showInspLog('${PIC_SCHEDULE_IDX}');" id="btnSaveGroup" class="btn btn-primary me-0 btn-sm rounded-pill waves-effect waves-light">Insp Log</a>
+            </div>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,220 @@
+﻿@using NavesPortalforWebWithCoreMvc.Common;
+@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Notifications;
+@model NavesPortalforWebWithCoreMvc.Models.PNAV_CAP_GET_INSPECTION_LOG_PIC_LISTResult
+
+@{
+    ViewBag.PageTitle = "CAP > Inspection Log Book";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "CAP Inspection Log Book";
+    ViewBag.FunctionName = "DetailPic";
+}
+
+@section ContentsSection{
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="ps-2 pageContentTitle">
+            <h3>@ViewBag.MenuName</h3>
+        </div>
+        <div></div>
+    </div>
+
+    <form id="frmCapInspectionLogBook" asp-controller="CapInspectionLogBook" asp-action="EditPic" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="CAP_INSPECTION_LOG_PIC_IDX"/>
+
+        <div class="align-items-center mx-0 row border-bottom border-top">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Work ID</label>
+            <div class="col-sm-6">
+                <label id="lblWorkId" class="col-form-label text-right">
+                    @{if (@Model != null) if (@Model.WORK_ID != null) @Model.WORK_ID}
+                </label>
+                <input type="hidden" asp-for="PIC_SCHEDULE_IDX"/>
+            </div>
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Designated PIC(@Model.PIC_TYPE.ToString().Substring(0, 1))</label>
+            <div class="col-sm-2">
+                <label id="lblPicName" class="col-form-label text-right">
+                    @{
+                        if (@Model != null) if (@Model.PIC_HTML != null) @Html.Raw(Model.PIC_HTML)
+                    }
+                </label>
+            </div>
+        </div>
+
+        <div class="row mt-1">
+            <div class="col-md-12">
+                @*dataSource="@ViewBag.WorkDataSource"*@
+                <ejs-grid id="GridWork"
+                      dataSource="@ViewBag.dataSource"
+                      enableInfiniteScrolling="true"
+                      allowSelection="false"
+                      allowTextWrap="true"
+                      allowResizing="true"
+                      allowSorting="true">
+                    <e-grid-columns>
+                        <e-grid-column field="NSN_ID" headerText="NSN" textAlign="Center" width="60" customAttributes=@(new{@class="customCss"})></e-grid-column>
+                        <e-grid-column field="PROJECT_ID" headerText="Project ID" textAlign="Center" width="60" customAttributes=@(new{@class="customCss"})></e-grid-column>
+                        <e-grid-column field="WORK_ID" headerText="Work ID" textAlign="Center" width="90" customAttributes=@(new{@class="customCss"})></e-grid-column>
+                        <e-grid-column field="VESSEL_NAME" textAlign="Center" headerText="Vessel Name(Type)" width="180" customAttributes=@(new{@class="customCss"})></e-grid-column>
+                        <e-grid-column field="DESCRIPTION" headerText="Description" width="200" customAttributes=@(new{@class="customCss"})></e-grid-column>
+                        <e-grid-column field="PLAN_INSPECTION_PERIOD" textAlign="Center" headerText="Date/Period(Planned)" width="140" customAttributes=@(new{@class="customCss"})></e-grid-column>
+                        <e-grid-column field="INSPECTION_PLACE" headerText="Place" disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                        <e-grid-column field="INSPECTION_DESCR" headerText="Inspection Detailed" textAlign="Center" disableHtmlEncode="false" customAttributes=@(new{@class="customCss"}) width="240"></e-grid-column>
+                        <e-grid-column field="PROGRESS" headerText="Progress(%)" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="80"></e-grid-column>
+                        @*<e-grid-column headerText="Plan" textAlign="Center" template="@Html.Raw("<div><a href=# onclick=fnGoPlanWorkId(\"${WORK_IDX}\");>${PLAN_END}</a></div>")" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>*@
+                    </e-grid-columns>
+                </ejs-grid>
+            </div>
+        </div>
+
+        <div class="mx-0 mt-1 row border-bottom border-top">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title" style="">Inspection Date / Period(Actual)</label>
+            <div class="col-sm-4 d-flex justify-content-start align-items-center">
+                @*<div class="col-sm-4 row d-flex align-items-center">*@
+                <label class="col-form-label text-start pe-2">From</label>
+                <ejs-datepicker ejs-for="INSPECTION_DATE_START" width="200px" id="dpInspectionPeriodStart" format="yyyy-MM-dd" cssClass="inputable" placeholder="Select To..."></ejs-datepicker>
+                <label class="col-form-label text-start px-2">To</label>
+                <ejs-datepicker ejs-for="INSPECTION_DATE_END" width="200px" id="dpInspectionPeriodEnd" format="yyyy-MM-dd" cssClass="inputable" placeholder="Select To..."></ejs-datepicker>
+            </div>
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Ref Project contract term</label>
+            <div class="col-sm-4 align-self-center">
+                <span>2022.01.01 ~ 2022.11.11</span>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Specific Progress (Hull)</label>
+            <div class="col-sm-4 align-items-center">
+                <ejs-NumericTextBox ejs-for="PROGRESS" id="txtProgress" width="150px" min="0" format="###,###,###.0" cssClass="e-outline text-left inputable" placeholder=""></ejs-NumericTextBox>
+                <span>&nbsp;%</span>
+            </div>
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Man Hour</label>
+            <div class="col-sm-4 d-flex justify-content-start align-items-center">
+                <ejs-NumericTextBox ejs-for="MAN_HOUR" id="txtManHour" width="150px" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="M/H..."></ejs-NumericTextBox>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Survey Report. NO</label>
+            <div class="col-sm-8 d-flex justify-content-start align-items-center">
+            @*<div class="col-sm-4 row g-0">*@
+                <label class="col-form-label px-1">KR - NVS -</label>
+                <ejs-textbox ejs-for="SURVEY_REPORT_NO" id="txtSurveyReportNo" width="150px" cssClass="e-outline text-left inputable" placeholder="Report No..."></ejs-textbox>
+                <label class="col-form-label px-2">OR</label>
+                <a onclick="fnGoElecSurveyReport();" class="btn btn-success btn-xs rounded-pill waves-effect waves-light me-1" style="width:90px;">E-SR</a>
+                <a onclick="fnGoElecSECheckList();" class="btn btn-success btn-xs rounded-pill waves-effect waves-light mx-1" style="width:90px;">E-SE Chk</a>
+            </div>
+        </div>
+
+        <div class="align-items-center mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">[LAST Inspection]</label>
+            <div class="col-sm-4 d-flex justify-content-start align-items-center">
+                <ejs-radiobutton ejs-for="LAST_INSPECTION" id="rdoNo" label="No" name="rdoNo" value="0" cssClass="pe-1" checked="true"></ejs-radiobutton>
+                <ejs-radiobutton ejs-for="LAST_INSPECTION" id="rdoYes" label="Yes" name="rdoNo" value="1" cssClass="pe-1"></ejs-radiobutton>
+            </div>
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Service Supplier Submit Due</label>
+            <div class="col-sm-4 d-flex justify-content-start align-items-center">
+                <ejs-NumericTextBox ejs-for="SERVICE_SUPPLIER_SUBMIT_DUE" id="txtServiceSupplierSubmitDue" width="150px" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="Days..."></ejs-NumericTextBox>
+                <span>&nbsp;&nbsp;Days</span>
+            </div>
+        </div>
+
+        <div class="mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Inspenction Summery</label>
+            <div class="col-sm-10 py-1">
+                <ejs-richtexteditor ejs-for="INSPECTION_RESULT" id="rteInspectionResult" height="220" enableResize="true" actionBegin="handleFullScreen" showCharCount="true" maxLength="5000">
+                    <e-richtexteditor-toolbarsettings type="Expand" enableFloating="true" items="@CommonSettingData.getBasicRichTextEditorItemLists()"></e-richtexteditor-toolbarsettings>
+                </ejs-richtexteditor>
+            </div>
+        </div>
+
+        <div class="mx-0 row border-bottom">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Inspenctor's Memo</label>
+            <div class="col-sm-10 py-1">
+                <ejs-richtexteditor ejs-for="INSPECTION_MEMO" id="rteInspectorMemo" height="178" enableResize="true" actionBegin="handleFullScreen" showCharCount="true" maxLength="5000">
+                    <e-richtexteditor-toolbarsettings type="Expand" enableFloating="true" items="@CommonSettingData.getBasicRichTextEditorItemLists()"></e-richtexteditor-toolbarsettings>
+                </ejs-richtexteditor>
+            </div>
+        </div>
+
+        <div class="pt-2 mx-0">
+            <div class="float-start row g-0">
+                <div class="col-auto pe-2">
+                    <a onclick="fnGoReport();" id="btnReport" class="btn btn-success btn-medium rounded-pill waves-effect waves-light me-1">REPORT</a>
+                </div>
+                <div class="col-auto pe-2">
+                </div>
+                <div class="col-auto">
+                </div>
+            </div>
+            <div class="float-end row g-0">
+                <div class="col-auto pe-2">
+                    @*<a id="btnSave" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">SAVE</a>*@
+                    <a id="btnUpdate" onclick="CheckSaveValidation();" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">SAVE</a>
+                </div>
+                <div class="col-auto pe-2">
+                    <a asp-controller="CapInspectionLogBook" asp-action="Index" id="btnList" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">LIST</a>
+                </div>
+                <div class="col-auto">
+                    <a onclick="" id="btnDelete" class="btn btn-danger btn-medium rounded-pill waves-effect waves-light">DELETE</a>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+
+@section Scripts{
+    <script type="text/javascript">
+        function CheckSaveValidation() {
+            UpdateInspectionLog();
+        }
+
+        function UpdateInspectionLog() {
+            var url = "/CapInspectionLogBook/SetCapInspectionLogPic";
+            $.ajax({
+                url: url,
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "json",
+                type: "post",
+                data: $("#frmCapInspectionLogBook").serialize(),
+                success: function (data) {
+                    if ("OK" == data) {
+                        //alert("수정되었습니다.");
+
+                        window.location.href = "/CapInspectionLogBook/DetailPic/" + "@Model.PIC_SCHEDULE_IDX";
+                    } else {
+                        alert(data);
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert("Error");
+                }
+            });
+        }
+
+        // DELETE 버튼 클릭 시
+        $("#btnDelete").click(function () {
+            if (confirm("삭제하시겠습니까?")) {
+                $.ajax({
+                    url: "/CapInspectionLogBook/DeleteInspectionLogPic",
+                    contentType: "application/x-www-form-urlencoded",
+                    dataType: "json",
+                    type: "post",
+                    data: $("#frmCapInspectionLogBook").serialize(),
+                    success: function (data) {
+                        if ("OK" == data) {
+                            window.location.href = "/CapInspectionLogBook";
+                        } else {
+                            alert(data);
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                        alert("Error");
+                    }
+                });
+            }
+        });
+    </script>
+}

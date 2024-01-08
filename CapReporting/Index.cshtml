@@ -1,0 +1,67 @@
+﻿@using Syncfusion.EJ2
+
+@{
+    ViewBag.PageTitle = "CAP > ";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "";
+    ViewBag.FunctionName = "List";
+}
+
+@section SearchSection{
+<div class="row align-items-center">
+    <div class="col-10">
+        <div class="m-2">
+            <div class="row align-items-center">
+                <div class="col-3">
+                    <ejs-textbox id="txtSearchBox" cssClass="e-outline" placeholder="Search Keyword..."></ejs-textbox>
+                </div>
+                <div class="col-auto">
+                    Period
+                </div>
+                <div class="col-2">
+                    <ejs-datepicker id="dpStartDate" format="yyyy-MM-dd" placeholder="Start Date..."></ejs-datepicker>
+                </div>
+                <div class="col-2 datepicker-section">
+                    <ejs-datepicker id="dpEndDate" format="yyyy-MM-dd" placeholder="End Date..."></ejs-datepicker>
+                </div>
+            </div>
+        </div>
+        <div class="m-2">
+            <div class="row">
+                <div class="col-6">
+                    <ejs-checkbox id="chkStauts" label="Status" checked="true"></ejs-checkbox>
+                    <ejs-checkbox id="chkProjectID" label="ProjectID" checked="true"></ejs-checkbox>
+                    <ejs-checkbox id="chkJobId" label="JobID" checked="true"></ejs-checkbox>
+                    <ejs-checkbox id="chkVesselName" label="Vessel Name" checked="true"></ejs-checkbox>
+                    <ejs-checkbox id="chkCategory" label="Category" checked="true"></ejs-checkbox>
+                    <ejs-checkbox id="chkSurveyor" label="Surveyor" checked="true"></ejs-checkbox>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="d-flex justify-content-end">
+            <div class="align-self-center">
+                <button asp-controller="PmsProjectIdManagement" asp-action="Search" id="Search" type="submit" class="btn btn-purple rounded-pill waves-effect waves-light">Search</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+@section ContentsSection{
+<div class="d-flex justify-content-end">
+    <div class="mt-0 mb-1">
+        <a asp-controller="PmsProjectIdManagement" asp-action="Create" id="btnNew" class="btn btn-primary rounded-pill waves-effect waves-light">New</a>
+        <a asp-controller="PmsProjectIdManagement" asp-action="Create" id="btnPrint" class="btn btn-primary rounded-pill waves-effect waves-light">Print</a>
+        <a asp-controller="PmsProjectIdManagement" asp-action="Create" id="btnExport" class="btn btn-primary rounded-pill waves-effect waves-light">Export</a>
+        <a asp-controller="PmsProjectIdManagement" asp-action="Create" id="btnListUp" class="btn btn-success btn-xs rounded-pill waves-effect waves-light">List-Up Option</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        List
+    </div>
+</div>
+}

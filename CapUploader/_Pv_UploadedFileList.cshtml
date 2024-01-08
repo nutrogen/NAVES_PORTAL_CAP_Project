@@ -1,0 +1,23 @@
+﻿@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Notifications;
+@using NavesPortalforWebWithCoreMvc.Models;
+@model List<TNAV_COM_FILE>
+
+@{
+    foreach (TNAV_COM_FILE file in @Model)
+    {
+        <div class="fileListHover">
+            <div class="p-1 mt-1 ps-2 border">
+                <span><i class="bi bi-filetype-@file.EXTENSION.Replace(".","")"></i><i class="bi bi-filetype-xls"></i></span>
+                <span class="fw-bolder">@file.ORIGINAL_FILENAME</span>
+                <span>[@file.CREATE_USER_NAME - @file.REG_DATE.ToShortDateString() @file.REG_DATE.ToString("HH:mm")]</span>
+
+                <!-- DOWNLOAD -->
+                <a class="ps-2 e-icons e-medium e-download text-primary fw-bolder pe-auto" style="cursor:pointer;" asp-controller="Uploader" asp-action="DownloadFile" asp-route-idx="@file.IDX"></a>
+
+                <!-- DELETE -->
+                <a class="ps-2 e-icons e-medium e-trash text-danger fw-bolder pe-auto" style="cursor:pointer;" onclick="OnClickFileDeleteCap('@file.IDX', '@file.DOCUMENT_IDX', '@file.KIND_OF_FILES')"></a>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,1018 @@
+﻿@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Notifications;
+@using Syncfusion.EJ2.Popups;
+@using Syncfusion.EJ2.Buttons;
+@model NavesPortalforWebWithCoreMvc.ViewModels.CapPlanningViewModel
+
+@{
+    ViewBag.PageTitle = "CAP > Planning";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "CAP Planning";
+    ViewBag.FunctionName = "Create";
+}
+
+@section ContentsSection{
+    <form id="frmCapPlanning" asp-controller="CapPlanning" asp-action="SavePlanning" method="post">
+        <input type="hidden" id="PLANNING_IDX" name="PLANNING_IDX" />
+        <input type="hidden" id="WORK_IDX" name="WORK_IDX" value="@ViewBag.Result.WORK_IDX"/>
+        <input type="hidden" id="WORK_ID" name="WORK_ID"  value="@ViewBag.Result.WORK_ID"/>
+        <input type="hidden" id="PLAN_DATE_START" name="PLAN_DATE_START" />
+        <input type="hidden" id="PLAN_DATE_END" name="PLAN_DATE_END" />
+        <input type="hidden" id="IS_PIC_FATIGUE" name="IS_PIC_FATIGUE" />
+        <input type="hidden" id="IS_PIC_HULL" name="IS_PIC_HULL" />
+        <input type="hidden" id="IS_PIC_MACHINERY" name="IS_PIC_MACHINERY" />
+        <input type="hidden" id="IS_PIC_ELECTRIC" name="IS_PIC_ELECTRIC" />
+        <input type="hidden" id="IS_PIC_SAFETY" name="IS_PIC_SAFETY" />
+
+        <div class="mx-3 mb-1 row border-bottom border-top">
+            <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">Work ID</label>
+            <div class="col-sm-4 col-form-label">
+                @ViewBag.Result.WORK_ID
+                </div>
+                <label class="col-sm-2 col-form-label text-end fw-bolder bg-create-title">STATUS</label>
+                <div class="col-sm-3">
+                <label id="lblProjectStatus" class="col-form-label text-right">
+                @{
+                if (ViewBag.Result.PROJECT_STATUS != null)
+                {
+                                                                @ViewBag.Result.PROJECT_STATUS
+                }
+                }
+                </label>
+            </div>
+        </div>
+
+        <div class="mx-3 mt-1 border-bottom">
+            <ejs-grid id="GridWork"
+                allowSorting="false"
+                dataSource="@ViewBag.dataSource" enableInfiniteScrolling="false" allowSelection="true" allowTextWrap="true" recordClick="onGridClick">
+                <e-grid-columns>
+                    <e-grid-column field="NSN_ID" headerText="NSN" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="80"></e-grid-column>
+                    <e-grid-column field="PROJECT_ID" headerText="Project ID" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="90"></e-grid-column>
+                    <e-grid-column field="WORK_ID" headerText="Work ID" template="#templateWorkId" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+                    <e-grid-column field="VESSEL_NAME" headerText="Vessel Name(Type)" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="150"></e-grid-column>
+
+                    <e-grid-column headerText="Work Plan" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                        columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() { new Syncfusion.EJ2.Grids.GridColumn { Field = "PLAN_DATE_START", Width = "90", HeaderText = "Start", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                    new Syncfusion.EJ2.Grids.GridColumn { Field = "PLAN_DATE_END", Width = "90", HeaderText = "End", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                        } )">
+                    </e-grid-column>
+
+                    <e-grid-column field="TOTAL_PROGRESS" headerText="Total Progress" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="120"></e-grid-column>
+                    <e-grid-column field="CONTACT_AMOUNT" headerText="Contact Amount" type="number" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="130"></e-grid-column>
+                    <e-grid-column headerText="Designated PIC" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                        columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() {   new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_F", Width = "130", HeaderText = "Fatigue/Strength", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_H", Width = "130", HeaderText = "Hull", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_M", Width = "130", HeaderText = "Machinery", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_E", Width = "130", HeaderText = "Electronic", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_S", Width = "130", HeaderText = "Safety", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                        } )">
+                    </e-grid-column>
+                </e-grid-columns>
+            </ejs-grid>
+        </div>
+
+        <script id="templateWorkId" type="text/x-template">
+            <div id="${WORK_ID}">
+                <a href=# onclick=fnOpenDetailed(\"${WORK_ID}\");>${WORK_ID}</a>
+                <input type=text class=d-none name=PLANNING_WORK value="${WORK_ID}" />
+            </div>
+        </script>
+
+        <div class="mx-3 mt-1 row border-bottom border-top">
+            <label class="col-sm-1 col-form-label text-end fw-bolder bg-create-title border-right">Client Info</label>
+            <div class="col-sm-11">
+                <div class="row border-bottom">
+                    <label class="col-sm-3 col-form-label text-end fw-bolder bg-create-title">PIC of Contractor</label>
+                    <div class="col-sm-2 text-center">
+                        <label id="lblContractorName" class="col-form-label text-right">
+                        @{
+                        if (@ViewBag.PROJECT.CLIENT_CONTRACTOR_NAME != null)
+                        {
+                                                                        @ViewBag.PROJECT.CLIENT_CONTRACTOR_NAME
+                        }
+                        }
+                        </label>
+                    </div>
+                    <div class="col-sm-3 text-center">
+                        <label id="lblContractorPhone" class="col-form-label text-right">
+                        @{
+                        if (@ViewBag.PROJECT.CLIENT_CONTRACTOR_MOBILE != null)
+                        {
+                                                                        @ViewBag.PROJECT.CLIENT_CONTRACTOR_MOBILE
+                        }
+                        }
+                        </label>
+                    </div>
+                    <div class="col-sm-3 text-center">
+                        <label id="lblContractorEmail" class="col-form-label text-right">
+                        @{
+                        if (@ViewBag.PROJECT != null)
+                        {
+                        if (@ViewBag.PROJECT.CLIENT_CONTRACTOR_EMAIL != null)
+                        {
+                                                                        @ViewBag.PROJECT.CLIENT_CONTRACTOR_EMAIL
+                        }
+                        }
+                        }
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row border-bottom">
+                    <label class="col-sm-3 col-form-label text-end fw-bolder bg-create-title">Supervisor of Client</label>
+                    <div class="col-sm-2 text-center">
+                        <label id="lblSupervisorName" class="col-form-label text-right">
+                        @{
+                        if (@ViewBag.PROJECT != null)
+                        {
+                        if (@ViewBag.PROJECT.CLIENT_SUPERVISOR_NAME != null)
+                        {
+                                                                        @ViewBag.PROJECT.CLIENT_SUPERVISOR_NAME
+                        }
+                        }
+                        }
+                        </label>
+                    </div>
+                    <div class="col-sm-3 text-center">
+                        <label id="lblSupervisorPhone" class="col-form-label text-right">
+                        @{
+                        if (@ViewBag.PROJECT != null)
+                        {
+                        if (@ViewBag.PROJECT.CLIENT_SUPERVISOR_MOBILE != null)
+                        {
+                                                                        @ViewBag.PROJECT.CLIENT_SUPERVISOR_MOBILE
+                        }
+                        }
+                        }
+                        </label>
+                    </div>
+                    <div class="col-sm-3 text-center">
+                        <label id="lblSupervisorEmail" class="col-form-label text-right">
+                        @{
+                        if (@ViewBag.PROJECT != null)
+                        {
+                        if (@ViewBag.PROJECT.CLIENT_SUPERVISOR_EMAIL != null)
+                        {
+                                                                        @ViewBag.PROJECT.CLIENT_CONTRACTOR_EMAIL
+                        }
+                        }
+                        }
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row border-bottom">
+                    <label class="col-sm-3 col-form-label text-end fw-bolder bg-create-title">PIC of Client</label>
+                    <div class="col-sm-2">
+                    <ejs-textbox type="text" id="PIC_NAME" cssClass="e-outline text-left inputable" placeholder="Name..."></ejs-textbox>
+                    </div>
+                    <div class="col-sm-3">
+                    <ejs-textbox type="text" id="PIC_MOBILE" cssClass="e-outline text-left inputable" placeholder="Phone..."></ejs-textbox>
+                    </div>
+                    <div class="col-sm-3">
+                    <ejs-textbox type="text" id="PIC_EMAIL" cssClass="e-outline text-left inputable" placeholder="Email..."></ejs-textbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-0 mt-3 border-bottom bg-title">
+            <label class="col-sm-12 col-form-label text-center fw-bolder">Inspection SCHEDULE</label>
+        </div>
+
+        <!-- Fatigue/strength -->
+        <div class="mx-0 mt-0 border-bottom bg-create-title-NoBorder row group-patigue" style="display: none">
+            <label class="col-sm-2 col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad">
+                Fatigue/strength
+            </label>
+            <div class="col-sm-8 bg-create-title-NoBorder text-center"></div>
+            <div class="col-sm-2 bg-create-title-NoBorder text-center" style="border-right: 1px solid #728fad">
+                <a onclick="setInspScheduleAdd('FATIGUE'); return false;" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">Add</a>
+            </div>
+        </div>
+
+        <div id="templateFatigue"></div>
+
+        <!-- HULL -->
+        <div class="mx-0 mt-2 border-bottom bg-create-title-NoBorder row group-hull" style="display: none">
+            <label class="col-sm-2 col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad;">
+                Hull
+            </label>
+            <div class="col-sm-8 bg-create-title-NoBorder text-center"></div>
+            <div class="col-sm-2 bg-create-title-NoBorder text-center" style="border-right: 1px solid #728fad;">
+                <a onclick="setInspScheduleAdd('HULL'); return false;" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">Add</a>
+            </div>
+        </div>
+
+        <div id="templateHull"></div>
+
+        <!-- Machinery -->
+        <div class="mx-0 mt-2 border-bottom bg-create-title-NoBorder row group-machinery" style="display: none">
+            <label class="col-sm-2 col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad;">
+                Machinery
+            </label>
+            <div class="col-sm-8 bg-create-title-NoBorder text-center"></div>
+            <div class="col-sm-2 bg-create-title-NoBorder text-center" style="border-right: 1px solid #728fad;">
+                <a onclick="setInspScheduleAdd('MACHINERY'); return false;" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">Add</a>
+            </div>
+        </div>
+
+        <div id="templateMachinery"></div>
+
+        <!-- Electric -->
+        <div class="mx-0 mt-2 border-bottom bg-create-title-NoBorder row group-electric" style="display: none">
+            <label class="col-sm-2 col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad;">
+                Electric
+            </label>
+            <div class="col-sm-8 bg-create-title-NoBorder text-center"></div>
+            <div class="col-sm-2 bg-create-title-NoBorder text-center" style="border-right: 1px solid #728fad;">
+                <a onclick="setInspScheduleAdd('ELECTRIC'); return false;" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">Add</a>
+            </div>
+        </div>
+
+        <div id="templateElectric"></div>
+
+        <!-- Safety -->
+        <div class="mx-0 mt-2 border-bottom bg-create-title-NoBorder row group-safety" style="display: none">
+            <label class="col-sm-2 col-form-label text-center fw-bolder bg-create-title-NoBorder" style="border-left: 1px solid #728fad;">
+                Safety
+            </label>
+            <div class="col-sm-8 bg-create-title-NoBorder text-center"></div>
+            <div class="col-sm-2 bg-create-title-NoBorder text-center" style="border-right: 1px solid #728fad;">
+                <a onclick="setInspScheduleAdd('SAFETY'); return false;" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">Add</a>
+            </div>
+        </div>
+
+        <div id="templateSafety"></div>
+    </form>
+
+    <div class="mx-3 me-3 my-3 mt-3 ">
+        <div class="">
+            <a onclick="PrintCheckList();" id="btnPrintCheckList" class="btn btn-success btn-medium rounded-pill waves-effect waves-light me-1" style="width:90px;">Prt-SICkl</a>
+            <a onclick="PrintReceipt();" id="btnprt" class="btn btn-success btn-medium rounded-pill waves-effect waves-light  me-1" style="width:110px;">Prt-Receipt</a>
+            <div class="mt-1" style="float:right;">
+                <a onclick="SavePlanning();" id="btnSaveGroup" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">SAVE</a>
+                <a asp-controller="CapPlanning" asp-action="Index" id="btnList" class="btn btn-primary me-1 btn-medium rounded-pill waves-effect waves-light">LIST</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="PartialViews">
+        @await Html.PartialAsync("~/Views/CapPlanning/_Partial/_CapPlanningPicGroupModalPartialView.cshtml", Model)
+        @await Html.PartialAsync("~/Views/CapPlanning/_Partial/_CapPlanningInspectionPicModalPartialView.cshtml", Model)
+    </div>
+
+    <script>
+        function onGridClick(args) {
+            //console.log(args);
+        }
+
+        function SendPlanningInfo() {
+            alert("SEND");
+        }
+
+        function PrintCheckList() {
+            alert("Print Check-List");
+        }
+
+        function PrintReceipt() {
+            alert("Print Receipt");
+        }
+
+        // 프로젝트 정보 항목 초기화
+        function InitProjectInfo() {
+            $("#lblProjectStatus").text("");
+            $("#lblContractorName").text("");
+            $("#lblContractorPhone").text("");
+            $("#lblContractorEmail").text("");
+            $("#lblSupervisorName").text("");
+            $("#lblSupervisorPhone").text("");
+            $("#lblSupervisorEmail").text("");
+        }
+
+        function fnOpenDetailed(workId) {
+            $("#hdWorkId").val(workId);
+            //$("#hdDesc").val(desc);
+
+            dialogObj_CapPlanningGroup.show();
+        }
+
+        // Plan 클릭 시 Planning Work 로 이동
+        function fnGoPlan(workIdx) {
+            window.location.href = "/CapPlanning/PlanningWork/" + workIdx;
+        }
+    </script>
+}
+
+@section Scripts {
+
+<script src="~/js/customGridFunction.js"></script>
+<script src="~/js/jquery.serializeObject.min.js"></script>
+
+@await Html.PartialAsync("~/Views/CapPlanning/_Partial/_CapPlanningInspectionScheduleTemplate.cshtml", Model)
+
+<script type="text/javascript">
+    var result = [];
+    var resultDelete = [];
+
+    var resultPicGroup = {};
+
+    var PlanningPicGroupFatigue = [];
+    var PlanningPicGroupHull = [];
+    var PlanningPicGroupMachinery = [];
+    var PlanningPicGroupElectric = [];
+    var PlanningPicGroupSafety = [];
+
+    var resultInspectionFatigue = [];
+    var resultInspectionHull = [];
+    var resultInspectionMachinery = [];
+    var resultInspectionElectric = [];
+    var resultInspectionSafety = [];
+
+    var fatigue_count = 0;
+
+    function setPicList(id, idx) {
+        $.ajax({
+            type: "POST",
+            url: "/CapPlanning/GetProjectPicList",
+            async: false,
+            data: { projectIdx: idx, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+            success: function (json) {
+                var acObj = document.getElementById(id).ej2_instances[0];
+                acObj.dataSource = [];
+                acObj.dataSource = json;
+                acObj.refresh();
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        setPicList('acPicUserFatigue', '@ViewBag.PROJECT.PROJECT_IDX');
+        setPicList('acPicUserHull', '@ViewBag.PROJECT.PROJECT_IDX');
+        setPicList('acPicUserMachinery', '@ViewBag.PROJECT.PROJECT_IDX');
+        setPicList('acPicUserElectric', '@ViewBag.PROJECT.PROJECT_IDX');
+        setPicList('acPicUserSafety', '@ViewBag.PROJECT.PROJECT_IDX');
+    });
+
+    function getPicGroupObject(PIC_TYPE, NAME) {
+        //console.log("getPicGroupObject");
+        //console.log("PIC_TYPE : " + PIC_TYPE);
+        //console.log("NAME : " + NAME);
+
+        var capPlanningPicGroup = $("#frmCapPlanningPicGroup").serializeObject();
+        var TNAV_CAP_PLANNING_PIC_GROUP = [];
+
+        var obj = {};
+
+        if (typeof (capPlanningPicGroup[NAME]) == 'string') {
+            obj = {};
+            obj.PIC_TYPE = PIC_TYPE;
+            obj.SUR_NO = capPlanningPicGroup[NAME];
+            TNAV_CAP_PLANNING_PIC_GROUP.push(obj);
+        } else if (typeof (capPlanningPicGroup[NAME]) == 'object') {
+            capPlanningPicGroup[NAME].forEach((value, index) => {
+                obj = {};
+                obj.PIC_TYPE = PIC_TYPE;
+                obj.SUR_NO = capPlanningPicGroup[NAME][index];
+                TNAV_CAP_PLANNING_PIC_GROUP.push(obj);
+            });
+        }
+
+        return TNAV_CAP_PLANNING_PIC_GROUP;
+    }
+
+    function SavePlanning() {
+        //console.log(result);
+            
+        let Form_Json = {};
+
+        Form_Json.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val()
+
+        Form_Json.tNAV_CAP_PLANNING_PIC_GROUP = [];
+        Form_Json.tNAV_PIC_LIST = [];
+
+        Form_Json.tNAV_CAP_PLANNING = $("#frmCapPlanning").serializeObject();
+
+        getPicGroupObject("FATIGUE", "PLANNING_PIC_FATIGUE").forEach((value, index) => { Form_Json.tNAV_CAP_PLANNING_PIC_GROUP.push(value); });
+        getPicGroupObject("HULL", "PLANNING_PIC_HULL").forEach((value, index) => { Form_Json.tNAV_CAP_PLANNING_PIC_GROUP.push(value); });
+        getPicGroupObject("MACHINERY", "PLANNING_PIC_MACHINERY").forEach((value, index) => { Form_Json.tNAV_CAP_PLANNING_PIC_GROUP.push(value); });
+        getPicGroupObject("ELECTRIC", "PLANNING_PIC_ELECTRIC").forEach((value, index) => { Form_Json.tNAV_CAP_PLANNING_PIC_GROUP.push(value); });
+        getPicGroupObject("SAFETY", "PLANNING_PIC_SAFETY").forEach((value, index) => { Form_Json.tNAV_CAP_PLANNING_PIC_GROUP.push(value); });
+
+        Form_Json.tNAV_CAP_PLANNING_PIC_SCHEDULE = result;
+
+        Form_Json.tNAV_CAP_PLANNING_PIC_GROUP_DELETE = resultDelete;
+
+        result.forEach((value, index) => {
+            //console.log(value);
+
+            value.PIC_LIST.forEach((value_pic, index_pic) => {
+                var obj = {};
+                obj.PIC_SCHEDULE_IDX = value.PIC_SCHEDULE_IDX;
+                obj.PIC_TYPE = value.PIC_TYPE;
+                obj.SUR_NO = value_pic.PIC;
+                Form_Json.tNAV_PIC_LIST.push(obj);
+            });
+        });
+
+        //console.log(Form_Json);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/CapPlanning/SavePlanning",
+            data: Form_Json,
+            success: function (json) {
+                //console.log(json);
+                if (json == "OK") {
+                    location.href = "/CapPlanning/Create/@ViewBag.Result.WORK_IDX";
+                }
+            },
+            error: function (req, status, error) {
+                alert(error);
+            }
+        });
+    }
+
+    function closeDialogInspectionPic() {
+        //console.log("pic_type :" + $("#PIC_TYPE").val());
+
+        var resultInspectionPic = $("#frmCapInspectionPic").serializeObject();
+        //console.log(resultInspectionPic);
+
+        var templateName = "";
+
+        templateName = getTemplateName($("#PIC_TYPE").val());
+
+        resultInspectionPic.PIC_LIST = [];
+
+        if (typeof (resultInspectionPic["PLANNING_PIC"]) == 'string') {
+            var Data = {
+                PIC: resultInspectionPic["PLANNING_PIC"],
+                PIC_NAME: resultInspectionPic["PLANNING_PIC_NAME"]
+            };
+
+            resultInspectionPic.PIC_LIST.push(Data);
+        } else if (typeof (resultInspectionPic["PLANNING_PIC"]) == 'object') {
+            resultInspectionPic["PLANNING_PIC"].forEach((value, index) => {
+                var Data = {
+                    PIC: resultInspectionPic["PLANNING_PIC"][index],
+                    PIC_NAME: resultInspectionPic["PLANNING_PIC_NAME"][index]
+                };
+
+                resultInspectionPic.PIC_LIST.push(Data);
+            });
+        }
+
+        //console.log("resultInspectionPic");
+        //console.log(resultInspectionPic);
+
+        var row = $.tmpl($("#row-template"), resultInspectionPic).appendTo($("#" + templateName));
+
+        result.push(resultInspectionPic);
+
+        //console.log(result);
+
+        $("#PIC_SCHEDULE_IDX").val("");
+        $("#PLAN_INSPECTION_DATE_START").val("");
+        $("#PLAN_INSPECTION_DATE_END").val("");
+        $("#INSPECTION_PLACE").val("");
+        $("#INSPECTION_DESCR").val("");
+
+        //console.log("closeDialogInspectionPic end");
+    }
+
+    function closeDialogInspectionPicEdit() {
+        //console.log("closeDialogInspectionPicEdit");
+        //console.log("result");
+        //console.log(result);
+
+        var resultInspectionPic = $("#frmCapInspectionPic").serializeObject();
+        //console.log(resultInspectionPic);
+        //console.log(resultInspectionPic.PIC_SCHEDULE_IDX);
+
+        var templateName = "";
+
+        templateName = getTemplateName($("#PIC_TYPE").val());
+
+        var div = $("#PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX);
+        //console.log(div);
+
+        div.find("#picList").children().empty();
+
+        resultInspectionPic.PIC_LIST = [];
+
+        //console.log(typeof (resultInspectionPic["PLANNING_PIC"]));
+
+        if (typeof (resultInspectionPic["PLANNING_PIC"]) == 'string') {
+            var Data = {
+                PIC: resultInspectionPic["PLANNING_PIC"],
+                PIC_NAME: resultInspectionPic["PLANNING_PIC_NAME"]
+            };
+
+            //console.log(div.find(".picList"));
+
+            div.find(".picList").append(
+                "<span class='fw-bold pic-user-name'>" + resultInspectionPic["PLANNING_PIC_NAME"] + "&nbsp;&nbsp;&nbsp;</span>" +
+                "<span class='sur-no'>[" + resultInspectionPic["PLANNING_PIC"] + "]&nbsp;&nbsp;&nbsp;</span>"
+            );
+
+            resultInspectionPic.PIC_LIST.push(Data);
+        } else if (typeof (resultInspectionPic["PLANNING_PIC"]) == 'object') {
+            resultInspectionPic["PLANNING_PIC"].forEach((value, index) => {
+                var Data = {
+                PIC: resultInspectionPic["PLANNING_PIC"][index],
+                PIC_NAME: resultInspectionPic["PLANNING_PIC_NAME"][index]
+                };
+
+                //console.log(div.find(".picList"));
+
+                div.find(".picList").append(
+                "<span class='fw-bold pic-user-name'>" + resultInspectionPic["PLANNING_PIC_NAME"][index] + "&nbsp;&nbsp;&nbsp;</span>" +
+                "<span class='sur-no'>[" + resultInspectionPic["PLANNING_PIC"][index] + "]&nbsp;&nbsp;&nbsp;</span>"
+                );
+
+                resultInspectionPic.PIC_LIST.push(Data);
+            });
+        }
+
+        //console.log($(".PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX));
+
+        //console.log($(".PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX + ".PLAN_INSPECTION_DATE_START"))
+
+        var idx = -1;
+
+        result.forEach((value, index) => {
+            if (resultInspectionPic.PIC_SCHEDULE_IDX == value.PIC_SCHEDULE_IDX) {
+                idx = index;
+                return;
+            }
+        });
+
+        result.splice(idx, 1, resultInspectionPic); // 삭제 후 추가
+
+        $(".PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX + " .PLAN_INSPECTION_DATE_START").text(result[idx].PLAN_INSPECTION_DATE_START);
+        $(".PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX + " .PLAN_INSPECTION_DATE_END").text(result[idx].PLAN_INSPECTION_DATE_END);
+        $(".PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX + " .INSPECTION_PLACE").text(result[idx].INSPECTION_PLACE);
+        $(".PIC-SCHEDULE-IDX-" + resultInspectionPic.PIC_SCHEDULE_IDX + " .INSPECTION_DESCR").text(result[idx].INSPECTION_DESCR);
+    }
+
+    function closeDialog() {
+        //console.log("closeDialog()");
+
+        resultPicGroup = $("#frmCapPlanningPicGroup").serializeObject();
+        //console.log(resultPicGroup);
+
+        var grid = document.getElementById("GridWork").ej2_instances[0];
+        var gridObj = grid.dataSource[0];
+
+        //console.log(resultPicGroup);
+        //alert("close");
+
+        $("#PLAN_DATE_START").val(resultPicGroup.INSPECTION_PERIOD_START);
+        $("#PLAN_DATE_END").val(resultPicGroup.INSPECTION_PERIOD_END);
+
+        $("#IS_PIC_FATIGUE").val(resultPicGroup.IS_PIC_FATIGUE);
+        $("#IS_PIC_HULL").val(resultPicGroup.IS_PIC_HULL);
+        $("#IS_PIC_MACHINERY").val(resultPicGroup.IS_PIC_MACHINERY);
+        $("#IS_PIC_ELECTRIC").val(resultPicGroup.IS_PIC_ELECTRIC);
+        $("#IS_PIC_SAFETY").val(resultPicGroup.IS_PIC_SAFETY);
+
+        if ($("#IS_PIC_FATIGUE").val() == "") {
+            $("#IS_PIC_FATIGUE").val("false");
+        } else {
+            $("#IS_PIC_FATIGUE").val("true");
+        }
+
+        if ($("#IS_PIC_HULL").val() == "") $("#IS_PIC_HULL").val("false"); else $("#IS_PIC_HULL").val("true");
+        if ($("#IS_PIC_MACHINERY").val() == "") $("#IS_PIC_MACHINERY").val("false"); else $("#IS_PIC_MACHINERY").val("true");
+        if ($("#IS_PIC_ELECTRIC").val() == "") $("#IS_PIC_ELECTRIC").val("false"); else $("#IS_PIC_ELECTRIC").val("true");
+        if ($("#IS_PIC_SAFETY").val() == "") $("#IS_PIC_SAFETY").val("false"); else $("#IS_PIC_SAFETY").val("true");
+
+        gridObj.PLAN_DATE_START = resultPicGroup.INSPECTION_PERIOD_START;
+        gridObj.PLAN_DATE_END = resultPicGroup.INSPECTION_PERIOD_END;
+
+        grid.dataSource = [];
+        grid.dataSource.unshift(gridObj);
+        grid.refresh();
+
+        PlanningPicGroupFatigue = setPlanningPicGroup("PLANNING_PIC_FATIGUE");
+        PlanningPicGroupHull = setPlanningPicGroup("PLANNING_PIC_HULL");
+        PlanningPicGroupMachinery = setPlanningPicGroup("PLANNING_PIC_MACHINERY");
+        PlanningPicGroupElectric = setPlanningPicGroup("PLANNING_PIC_ELECTRIC");
+        PlanningPicGroupSafety = setPlanningPicGroup("PLANNING_PIC_SAFETY");
+
+        if (PlanningPicGroupFatigue.length > 0) { $(".group-patigue").css("display", "flex"); } else { $(".group-patigue").css("display", "none"); }
+        if (PlanningPicGroupHull.length > 0) { $(".group-hull").css("display", "flex"); } else { $(".group-hull").css("display", "none"); }
+        if (PlanningPicGroupMachinery.length > 0) { $(".group-machinery").css("display", "flex"); } else { $(".group-machinery").css("display", "none"); }
+        if (PlanningPicGroupElectric.length > 0) { $(".group-electric").css("display", "flex"); } else { $(".group-electric").css("display", "none"); }
+        if (PlanningPicGroupSafety.length > 0) { $(".group-safety").css("display", "flex"); } else { $(".group-safety").css("display", "none"); }
+        }
+
+        function setPlanningPicGroup(picGroupName) {
+        var PicGroup = [];
+        resultPicGroup = $("#frmCapPlanningPicGroup").serializeObject();
+        //console.log("resultPicGroup");
+        //console.log(resultPicGroup);
+        //console.log(picGroupName);
+
+        //console.log(typeof (resultPicGroup[picGroupName]);
+
+        if (typeof (resultPicGroup[picGroupName]) == 'string') {
+            var Data = {
+            Name: resultPicGroup[picGroupName + "_NAME"] + " (" + resultPicGroup[picGroupName] + ")",
+            Value: resultPicGroup[picGroupName],
+            Castcading: null
+            };
+
+            PicGroup.push(Data);
+
+        } else if (typeof (resultPicGroup[picGroupName]) == 'object') {
+            resultPicGroup[picGroupName].forEach((value, index) => {
+                var Data = {
+                    Name: resultPicGroup[picGroupName + "_NAME"][index] + " (" + resultPicGroup[picGroupName][index] + ")",
+                    Value: resultPicGroup[picGroupName][index],
+                    Castcading: null
+                };
+
+                PicGroup.push(Data);
+            });
+        }
+
+        //console.log('PicGroup');
+        //console.log(PicGroup);
+
+        return PicGroup;
+    }
+
+    function setPlanningPicGroupDataSource(picGroupName, dropdownlist) {
+        resultPicGroup = $("#frmCapPlanningPicGroup").serializeObject();
+
+        //console.log("resultPicGroup");
+        //console.log(resultPicGroup);
+        //console.log(picGroupName);
+
+        if (typeof (resultPicGroup[picGroupName]) == 'string') {
+            var Data = {
+                Name: resultPicGroup[picGroupName + "_NAME"] + " (" + resultPicGroup[picGroupName] + ")",
+                Value: resultPicGroup[picGroupName],
+                Castcading: null
+            };
+
+            dropdownlist.addItem(Data, dropdownlist.dataSource.length);
+            dropdownlist.dataSource.unshift(Data);
+        } else if (typeof (resultPicGroup[picGroupName]) == 'object') {
+            resultPicGroup[picGroupName].forEach((value, index) => {
+                var Data = {
+                    Name: resultPicGroup[picGroupName + "_NAME"][index] + " (" + resultPicGroup[picGroupName][index] + ")",
+                    Value: resultPicGroup[picGroupName][index],
+                    Castcading: null
+                };
+
+                dropdownlist.addItem(Data, dropdownlist.dataSource.length);
+                dropdownlist.dataSource.unshift(Data);
+            });
+        }
+
+        dropdownlist.refresh();
+    }
+
+    function setInspScheduleAdd(PIC_TYPE) {
+        $("#OPEN_TYPE").val("I");
+        $("#PLAN_INSPECTION_DATE_START").val("");
+        $("#PLAN_INSPECTION_DATE_END").val("");
+        $("#INSPECTION_PLACE").val("");
+        $("#INSPECTION_DESCR").val("");
+
+        InitInspModal(PIC_TYPE);
+
+        //console.log('setInspScheduleAdd');
+        //console.log(resultPicGroup);
+
+        var title = "";
+
+        var _dropdownlist = document.getElementById('picUser').ej2_instances[0];
+
+        if (PIC_TYPE == 'FATIGUE') {
+            title = "Fatigue/strength";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_FATIGUE");
+        } else if (PIC_TYPE == 'HULL') {
+            title = "Hull";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_HULL");
+        } else if (PIC_TYPE == 'MACHINERY') {
+            title = "Machinery";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_MACHINERY");
+        } else if (PIC_TYPE == 'ELECTRIC') {
+            title = "Electric";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_ELECTRIC");
+        } else if (PIC_TYPE == 'SAFETY') {
+            title = "Safety";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_SAFETY");
+        }
+
+        _dropdownlist.refresh();
+
+        dialogObj_CapPlanningInspectionPic.header = "Inspection Schedule - " + title;
+
+        $("#FLAG").val("I");
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "@Url.Action("GetGUID")",
+            success: function (response) {
+                $("#PIC_SCHEDULE_IDX").val(response.Value);
+                dialogObj_CapPlanningInspectionPic.show();
+            },
+            error: function (req, status, error) {
+            }
+        });
+    }
+
+    function setInspScheduleEdit(PIC_TYPE, GUID) {
+        //console.log("setInspScheduleEdit");
+
+        $("#OPEN_TYPE").val("E");
+
+        //console.log(result);
+
+        InitInspModal(PIC_TYPE);
+
+        var idx = -1;
+
+        result.forEach((value, index) => {
+            if (GUID == value.PIC_SCHEDULE_IDX) {
+                idx = index;
+                return;
+            }
+        });
+
+        //console.log(idx);
+
+        var _dropdownlist = document.getElementById('picUser').ej2_instances[0];
+
+        if (PIC_TYPE == 'FATIGUE') {
+            title = "Fatigue/strength";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_FATIGUE");
+        } else if (PIC_TYPE == 'HULL') {
+            title = "Hull";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_HULL");
+        } else if (PIC_TYPE == 'MACHINERY') {
+            title = "Machinery";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_MACHINERY");
+        } else if (PIC_TYPE == 'ELECTRIC') {
+            title = "Electric";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_ELECTRIC");
+        } else if (PIC_TYPE == 'SAFETY') {
+            title = "Safety";
+            _dropdownlist.dataSource = setPlanningPicGroup("PLANNING_PIC_SAFETY");
+        }
+
+        _dropdownlist.refresh();
+
+        var args = {};
+
+        //OnChangeSelectPic(args);
+
+        if (typeof (result[idx]["PLANNING_PIC"]) == 'string') {
+            var Data = {
+                Name: result[idx]["PLANNING_PIC_NAME"] + " (" + result[idx]["PLANNING_PIC"] + ")",
+                Value: result[idx]["PLANNING_PIC"],
+                Castcading: null
+            };
+
+            args.itemData = Data;
+            OnChangeSelectPic(args);
+        } else if (typeof (result[idx]["PLANNING_PIC"]) == 'object') {
+            result[idx]["PLANNING_PIC"].forEach((value, index) => {
+                var Data = {
+                    Name: result[idx]["PLANNING_PIC_NAME"][index] + " (" + result[idx]["PLANNING_PIC"][index] + ")",
+                    Value: result[idx]["PLANNING_PIC"][index],
+                    Castcading: null
+                };
+
+                args.itemData = Data;
+                OnChangeSelectPic(args);
+            });
+        }
+
+        $("#PIC_SCHEDULE_IDX").val(result[idx].PIC_SCHEDULE_IDX);
+        $("#PLAN_INSPECTION_DATE_START").val(result[idx].PLAN_INSPECTION_DATE_START);
+        $("#PLAN_INSPECTION_DATE_END").val(result[idx].PLAN_INSPECTION_DATE_END);
+        $("#INSPECTION_PLACE").val(result[idx].INSPECTION_PLACE);
+        $("#INSPECTION_DESCR").val(result[idx].INSPECTION_DESCR);
+
+        dialogObj_CapPlanningInspectionPic.header = "Inspection Schedule - " + title;
+
+        dialogObj_CapPlanningInspectionPic.show();
+    }
+
+    function setInspScheduleDelete(PIC_TYPE, GUID) {
+        //console.log(result);
+
+        var idx = -1;
+
+        result.forEach((value, index) => {
+            if (GUID == value.PIC_SCHEDULE_IDX) {
+                idx = index;
+                return;
+            }
+        });
+
+        $(".PIC-SCHEDULE-IDX-" + result[idx].PIC_SCHEDULE_IDX).empty();
+
+        resultDelete.push(result[idx]);
+        result.splice(idx, 1); // 삭제
+    }
+
+    function InitInspModal(PIC_TYPE) {
+        $("#picUserList").empty();
+        $("#PIC_TYPE").val(PIC_TYPE);
+
+        var title = "";
+
+        if (PIC_TYPE == 'FATIGUE') {
+            title = "Fatigue/strength";
+        } else if (PIC_TYPE == 'HULL') {
+            title = "Hull";
+        } else if (PIC_TYPE == 'MACHINERY') {
+            title = "Machinery";
+        } else if (PIC_TYPE == 'ELECTRIC') {
+            title = "Electric";
+        } else if (PIC_TYPE == 'SAFETY') {
+            title = "Safety";
+        }
+
+        dialogObj_CapPlanningInspectionPic.header = "Inspection Schedule - " + title;
+    }
+
+    function showGroup() {
+
+    }
+
+    function CapPlanningInspectionPicClose() {
+        var _dropdownlist = document.getElementById('picUser').ej2_instances[0];
+
+        _dropdownlist.list.querySelectorAll('li').forEach((value, index) => {
+        $(value).remove();
+        });
+
+        _dropdownlist.dataSource = [];
+        _dropdownlist.refresh();
+
+        $("#picUserList").empty();
+
+        $("#PLAN_INSPECTION_DATE_START").val("");
+        $("#PLAN_INSPECTION_DATE_END").val("");
+        $("#INSPECTION_PLACE").val("");
+        $("#INSPECTION_DESCR").val("");
+    }
+
+    function getTemplateName(picType) {
+        var templateName = "";
+
+        if (picType == "FATIGUE") {
+            templateName = "templateFatigue";
+        } else if (picType == "HULL") {
+            templateName = "templateHull";
+        } else if (picType == "MACHINERY") {
+            templateName = "templateMachinery";
+        } else if (picType == "ELECTRIC") {
+            templateName = "templateElectric";
+        } else if (picType == "SAFETY") {
+            templateName = "templateSafety";
+        }
+
+        return templateName;
+    }
+
+    @{
+        if (ViewBag.resultCapPlanning != null)
+        {
+                                                            @Html.Raw("" +
+            "function setInspectionScheduleInfo(resultInspectionPic) {" + "\n" +
+            "   resultInspectionPic.PLAN_INSPECTION_DATE_START = resultInspectionPic.PLAN_INSPECTION_DATE_START.substring(0, 10);" + "\n" +
+            "   resultInspectionPic.PLAN_INSPECTION_DATE_END = resultInspectionPic.PLAN_INSPECTION_DATE_END.substring(0, 10);" + "\n" +
+            "   //console.log(resultInspectionPic);" + "\n" +
+            "   resultInspectionPic.PIC_LIST = []; " + "\n" +
+            "   resultInspectionPic.PLANNING_PIC = []; " + "\n" +
+            "   resultInspectionPic.PLANNING_PIC_NAME = []; " + "\n" +
+            "   var picObj = {};" + "\n" +
+            "" +
+            ""
+            );
+
+            // ViewBag.resultPic
+                                                            @foreach(Object obj in ViewBag.resultPic) { 
+                                                                @Html.Raw(" " +
+                "var obj = {};" + "\n" +
+                "obj = " + System.Text.Json.JsonSerializer.Serialize(obj) + ";" + "\n" +
+                ""
+                );
+                                                                @Html.Raw("" +
+                "if(resultInspectionPic.PIC_SCHEDULE_IDX == obj.PIC.PIC_SCHEDULE_IDX) {" + "\n" +
+                "   picObj = {};" + "\n" +
+                "   picObj.PIC = obj.GROUP.SUR_NO;" + "\n" +
+                "   picObj.PIC_NAME = obj.GROUP.USER_NAME_EN;" + "\n" +
+                "   picObj.PIC_TYPE = obj.PIC.PIC_TYPE;" + "\n" +
+                "   resultInspectionPic.PIC_LIST.push(picObj);" + "\n" +
+                "   resultInspectionPic.PLANNING_PIC.push(obj.GROUP.SUR_NO);" + "\n" +
+                "   resultInspectionPic.PLANNING_PIC_NAME.push(obj.GROUP.USER_NAME_EN);" + "\n" +
+                "}" + "\n" +
+                ""
+                );
+            }
+
+                                                            @Html.Raw("   " +
+            "   var templateName = '';" + "\n" +
+            "   templateName = getTemplateName(resultInspectionPic.PIC_TYPE);" + "\n" +
+            "   var row = $.tmpl($('#row-template'), resultInspectionPic).appendTo($('#' + templateName));\n" + "\n" +
+            "   result.push(resultInspectionPic);" + "\n" +
+            "\n" +
+            "} " +  "\n"
+            );
+        }
+    }
+
+    $(function(){
+        @{
+            if (ViewBag.resultCapPlanning != null)
+            {
+                                                                @Html.Raw("" + "\n" +
+                "$('#PLANNING_IDX').val('"+@ViewBag.resultCapPlanning.PLANNING_IDX + "');" + "\n" +
+                "$('#PIC_NAME').val('"+@ViewBag.resultCapPlanning.PIC_NAME+"');" + "\n" +
+                "$('#PIC_MOBILE').val('"+@ViewBag.resultCapPlanning.PIC_MOBILE+"');" + "\n" +
+                "$('#PIC_EMAIL').val('"+@ViewBag.resultCapPlanning.PIC_EMAIL+"');" + "\n" +
+                "$('#PLAN_DATE_START').val('"+@ViewBag.resultCapPlanning.PLAN_DATE_START.ToString().Substring(0, 10)+"');" + "\n" +
+                "$('#PLAN_DATE_END').val('"+@ViewBag.resultCapPlanning.PLAN_DATE_END.ToString().Substring(0, 10)+"');" + "\n" +
+                "$('#IS_PIC_FATIGUE').val('"+@ViewBag.resultCapPlanning.IS_PIC_FATIGUE.ToString().Replace("True", "true").Replace("False", "false")+"');" + "\n" +
+                "$('#IS_PIC_HULL').val('"+@ViewBag.resultCapPlanning.IS_PIC_HULL.ToString().Replace("True", "true").Replace("False", "false")+"');" + "\n" +
+                "$('#IS_PIC_MACHINERY').val('"+@ViewBag.resultCapPlanning.IS_PIC_MACHINERY.ToString().Replace("True", "true").Replace("False", "false")+"');" + "\n" +
+                "$('#IS_PIC_ELECTRIC').val('"+@ViewBag.resultCapPlanning.IS_PIC_ELECTRIC.ToString().Replace("True", "true").Replace("False", "false")+"');" + "\n" +
+                "$('#IS_PIC_SAFETY').val('"+@ViewBag.resultCapPlanning.IS_PIC_SAFETY.ToString().Replace("True", "true").Replace("False", "false")+"');" + "\n" +
+                "$('#dpInspectionPeriodStart').val('"+@ViewBag.resultCapPlanning.PLAN_DATE_START.ToString().Substring(0, 10)+"');" + "\n" +
+                "$('#dpInspectionPeriodEnd').val('"+@ViewBag.resultCapPlanning.PLAN_DATE_END.ToString().Substring(0, 10)+"');" + "\n" +
+                ""
+                );
+
+                                                                @foreach(TNAV_CAP_PLANNING_PIC_GROUP obj in ViewBag.resultCapPlanningPicGroup) {
+                                                                    @if(obj.PIC_TYPE == "FATIGUE") {
+                                                                        @Html.Raw("var args_"+obj.PIC_TYPE+" = {};");
+                                                                        @Html.Raw("args_"+obj.PIC_TYPE+" = {}; args_"+obj.PIC_TYPE+".itemData = {Value: '"+obj.SUR_NO+"'}; " + 
+                        "OnChangeSelectPicFatigue(args_"+obj.PIC_TYPE+"); " +
+                        ""
+                        );
+                    }
+
+                                                                    @if(obj.PIC_TYPE == "HULL") {
+                                                                        @Html.Raw("var args_"+obj.PIC_TYPE+" = {};");
+                                                                        @Html.Raw("args_"+obj.PIC_TYPE+" = {}; args_"+obj.PIC_TYPE+".itemData = {Value: '"+obj.SUR_NO+"'}; " + 
+                        "OnChangeSelectPicHull(args_"+obj.PIC_TYPE+"); " +
+                        ""
+                        );
+                    }
+
+                                                                    @if(obj.PIC_TYPE == "MACHINERY") {
+                                                                        @Html.Raw("var args_"+obj.PIC_TYPE+" = {};");
+                                                                        @Html.Raw("args_"+obj.PIC_TYPE+" = {}; args_"+obj.PIC_TYPE+".itemData = {Value: '"+obj.SUR_NO+"'}; " + 
+                        "OnChangeSelectPicMachinery(args_"+obj.PIC_TYPE+"); " +
+                        ""
+                        );
+                    }
+
+                                                                    @if(obj.PIC_TYPE == "ELECTRIC") {
+                                                                        @Html.Raw("var args_"+obj.PIC_TYPE+" = {};");
+                                                                        @Html.Raw("args_"+obj.PIC_TYPE+" = {}; args_"+obj.PIC_TYPE+".itemData = {Value: '"+obj.SUR_NO+"'}; " + 
+                        "OnChangeSelectPicElectric(args_"+obj.PIC_TYPE+"); " +
+                        ""
+                        );
+                    }
+
+                                                                    @if(obj.PIC_TYPE == "SAFETY") {
+                                                                        @Html.Raw("var args_"+obj.PIC_TYPE+" = {};");
+                                                                        @Html.Raw("args_"+obj.PIC_TYPE+" = {}; args_"+obj.PIC_TYPE+".itemData = {Value: '"+obj.SUR_NO+"'}; " + 
+                        "OnChangeSelectPicSafety(args_"+obj.PIC_TYPE+"); " +
+                        ""
+                        );
+                    }
+                }
+        
+                                                                @Html.Raw("closeDialog();");
+                                                                @Html.Raw("var resultInspectionPic = {}; ");
+
+                // Inspection SCHEDULE 템플릿 추가
+                                                                @foreach(TNAV_CAP_PLANNING_PIC_SCHEDULE obj in ViewBag.resultInspectionSchedule) {
+                                                                    @Html.Raw("resultInspectionPic = "+System.Text.Json.JsonSerializer.Serialize(obj)+";" +
+                    "" +
+                    ""
+                    );
+                                                                    @Html.Raw("setInspectionScheduleInfo(resultInspectionPic);");
+                }
+            }
+        }
+    });
+</script>
+}

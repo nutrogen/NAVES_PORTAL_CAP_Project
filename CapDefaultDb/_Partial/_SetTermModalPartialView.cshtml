@@ -1,0 +1,196 @@
+﻿@using Syncfusion.EJ2;
+@using Syncfusion.EJ2.Notifications;
+@using Syncfusion.EJ2.QueryBuilder;
+
+@{
+    var Modalanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Fade };
+    var CloseButton_SetTerm = new
+    {
+        content = "CLOSE"
+    };
+
+    var SaveButton_SetTerm = new
+    {
+        content = "SAVE",
+        isPrimary = true
+    };
+}
+
+<ejs-dialog id="modal_dialog_SetTerm" animationSettings="Modalanimation" width="900px" height="360px"
+            target="#content-page"
+            open="dialogOpen_SetTerm"
+            close="dialogClose_SetTerm"
+            header="Set Term (Insp Interval Setup)"
+            isModal="true"
+            visible="false"
+            allowDragging="true"
+            showCloseIcon="true"
+            created="modalCreated_SetTerm">
+    <e-content-template>
+        <form id="frmCapDefaultDbSetTerm" asp-controller="CapDefaultDb" asp-action="SaveSetTerm" method="post">
+            <div class="mx-0 mt-1 row border-top">
+                <label class="col-sm-4 col-form-label text-center fw-bolder bg-create-title">Category</label>
+                <label class="col-sm-4 col-form-label text-center fw-bolder bg-create-title" style="border-left:1px solid #dee2e6">Work ID Initial</label>
+                <label class="col-sm-4 col-form-label text-center fw-bolder bg-create-title" style="border-left:1px solid #dee2e6">Service Life</label>
+            </div>
+            <div class="align-items-center mx-0 row border-bottom">
+                <div class="col-sm-4 text-center">Government Ship</div>
+                <div class="col-sm-4 text-center">GCA</div>
+                <div class="col-sm-4 text-center py-1">
+                    <ejs-numerictextbox id="txtGcaServiceLifeSerTermModal" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="Government Ship Service Life..."></ejs-numerictextbox>
+                </div>
+            </div>
+            <div class="align-items-center mx-0 row border-bottom">
+                <div class="col-sm-4 text-center">Naval vessel</div>
+                <div class="col-sm-4 text-center">NCA</div>
+                <div class="col-sm-4 text-center py-1">
+                    <ejs-numerictextbox id="txtNcaServiceLifeSerTermModal" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="Naval vessel Service Life..."></ejs-numerictextbox>
+                </div>
+            </div>
+            <div class="align-items-center mx-0 row border-bottom">
+                <div class="col-sm-4 text-center">Korea Coast Guard</div>
+                <div class="col-sm-4 text-center">PCA</div>
+                <div class="col-sm-4 text-center py-1">
+                    <ejs-numerictextbox id="txtPcaServiceLifeSerTermModal" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="Korea Coast Guard Service Life..."></ejs-numerictextbox>
+                </div>
+            </div>
+            <div class="align-items-center mx-0 row border-bottom">
+                <div class="col-sm-4 text-center">Submerged Ship</div>
+                <div class="col-sm-4 text-center">SCA</div>
+                <div class="col-sm-4 text-center py-1">
+                    <ejs-numerictextbox id="txtScaServiceLifeSerTermModal" min="0" format="###,###,###" cssClass="e-outline text-left inputable" placeholder="Submerged Ship Service Life..."></ejs-numerictextbox>
+                </div>
+            </div>
+
+            <div style="display:none;">
+                <input type="hidden" id="hdCategoryIdSetTermModal" />
+            </div>
+
+        </form>
+
+        <div class="pt-2 mx-0">
+            <div class="float-start row g-0">
+                <div class="col-auto pe-2">
+                </div>
+                <div class="col-auto pe-2">
+                </div>
+                <div class="col-auto">
+                </div>
+            </div>
+            <div class="float-end row g-0">
+                <div class="col-auto pe-2">
+                </div>
+                <div class="col-auto pe-2">
+                    <a id="btnSetTermModalSave" class="btn btn-primary rounded-pill waves-effect waves-light btn-medium me-1" onclick="dlgSetTermBtnSaveClick()">SAVE</a>
+                </div>
+                <div class="col-auto">
+                    <a id="btnSetTermModalClose" class="btn btn-secondary rounded-pill waves-effect waves-light btn-medium" onclick="dlgSetTermBtnCloseClick()">CLOSE</a>
+                </div>
+            </div>
+        </div>
+    </e-content-template>
+</ejs-dialog>
+
+<script>
+    var dialogObj_SetTerm;
+
+    function dlgSetTermBtnSaveClick() {
+        SaveServiceLifeSetTermModal();
+    }
+
+    function dlgSetTermBtnCloseClick() {
+        dialogObj_SetTerm.hide();
+    }
+
+    // 모달이 생성될 때
+    function modalCreated_SetTerm() {
+        dialogObj_SetTerm = this;
+    }
+
+    // 모달이 열릴 때
+    function dialogOpen_SetTerm() {
+        //InitServiceLife();
+        //BindServiceLife();
+    }
+
+    // 모달이 닫힐 때
+    function dialogClose_SetTerm() {
+        InitServiceLifeSetTermModal();
+    }
+
+    function InitServiceLifeSetTermModal() {
+        var txtGcaServiceLife = document.getElementById("txtGcaServiceLifeSerTermModal").ej2_instances[0];
+        txtGcaServiceLife.value = null;
+
+        var txtNcaServiceLife = document.getElementById("txtNcaServiceLifeSerTermModal").ej2_instances[0];
+        txtNcaServiceLife.value = null;
+
+        var txtPcaServiceLife = document.getElementById("txtPcaServiceLifeSerTermModal").ej2_instances[0];
+        txtPcaServiceLife.value = null;
+
+        var txtScaServiceLife = document.getElementById("txtScaServiceLifeSerTermModal").ej2_instances[0];
+        txtScaServiceLife.value = null;
+
+        dialogObj_SetTerm.style.display = 'block';
+    }
+
+    function SaveServiceLifeSetTermModal() {
+        if (confirm("저장하시겠습니까?")) {
+            var txtGcaServiceLife = document.getElementById("txtGcaServiceLifeSerTermModal").ej2_instances[0];
+            var txtNcaServiceLife = document.getElementById("txtNcaServiceLifeSerTermModal").ej2_instances[0];
+            var txtPcaServiceLife = document.getElementById("txtPcaServiceLifeSerTermModal").ej2_instances[0];
+            var txtScaServiceLife = document.getElementById("txtScaServiceLifeSerTermModal").ej2_instances[0];
+
+            $.ajax({
+                url: "@Url.Action("SaveSetTerm")",
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "json",
+                type: "post",
+                data: { "gcaServiceLife": txtGcaServiceLife.value,
+                        "ncaServiceLife": txtNcaServiceLife.value,
+                        "pcaServiceLife": txtPcaServiceLife.value,
+                        "scaServiceLife": txtScaServiceLife.value 
+                },
+                success: function(data) {
+                    if (data != null) {
+
+                        if (data.result == "OK") {
+                            // 검사주기 수정
+                            var dlProjectCagegory = document.getElementById("dlProjectCagegory").ej2_instances[0];
+                            var txtInspectionInterval = document.getElementById("txtInspectionInterval").ej2_instances[0];
+
+                            switch (dlProjectCagegory.value) {
+                                case "GCA":
+                                    txtInspectionInterval.value = txtGcaServiceLife.value
+                                    break;
+                                case "NCA":
+                                    txtInspectionInterval.value = txtNcaServiceLife.value
+                                    break;
+                                case "PCA":
+                                    txtInspectionInterval.value = txtPcaServiceLife.value
+                                    break;
+                                case "SCA":
+                                    txtInspectionInterval.value = txtScaServiceLife.value
+                                    break;
+                            }
+
+                            alert("저장되었습니다.");
+
+                            dialogObj_SetTerm.hide();
+                        }
+                        else {
+                            alert(data.message);
+                        }
+                    }
+                    else {
+                        alert("Error : data is null");
+                    }
+                },
+                error: function(data) {
+                    console.log(data);
+                    alert("Error");
+                }
+            });
+        }
+    }
+</script>

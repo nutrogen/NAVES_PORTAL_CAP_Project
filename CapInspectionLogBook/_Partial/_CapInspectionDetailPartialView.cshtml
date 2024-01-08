@@ -1,0 +1,103 @@
+﻿@using Syncfusion.EJ2;
+@using Syncfusion.EJ2.Notifications;
+@using Syncfusion.EJ2.QueryBuilder;
+
+@{
+    var Modalanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Fade };
+    var CloseButton_CapInspectionDetail = new
+    {
+        content = "CLOSE"
+    };
+}
+
+<ejs-dialog id="modal_dialog_CapInspectionDetail" animationSettings="Modalanimation" width="1380px" height="480px"
+            target="#content-page"
+            open="dialogOpen_CapInspectionDetail"
+            close="dialogClose_CapInspectionDetail"
+            header="Inpection List"
+            isModal="true"
+            visible="false"
+            allowDragging="true"
+            showCloseIcon="true"
+            created="modalCreated_CapInspectionDetail">
+    @*<e-dialog-position X="600"> </e-dialog-position>*@
+    <e-content-template>
+        <ejs-grid id="GridDetail" enableInfiniteScrolling="false" 
+                height="300"
+                rowHeight="32"
+                allowResizing="true"
+                allowReordering="true"
+                allowSorting="false"
+                allowMultiSorting="true"
+                allowFiltering="false"
+                allowTextWrap="true"
+                allowExcelExport="false"
+                allowPdfExport="false"
+                allowGrouping="false"
+                allowPaging="false"
+                allowSelection="false"
+                showColumnChooser="false">
+            <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+            <e-grid-groupSettings enableLazyLoading="true" allowReordering="true" showDropArea="true"></e-grid-groupSettings>
+            <e-grid-columns>
+                <e-grid-column field="NO" headerText="No" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="40"></e-grid-column>
+                <e-grid-column field="PIC_TYPE_INIT" headerText="" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="30"></e-grid-column>
+                <e-grid-column field="PIC_HTML" headerText="Inspector(PIC)" disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="130"></e-grid-column>
+                <e-grid-column field="INSPECTION_PERIOD" headerText="Inspection Date/Period" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="150"></e-grid-column>
+                <e-grid-column field="INSPECTION_PLACE" headerText="Place" disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                <e-grid-column field="INSPECTION_DESCR" headerText="Inspection Detailed" textAlign="Center" disableHtmlEncode="false" customAttributes=@(new{@class="customCss"}) width="240"></e-grid-column>
+                <e-grid-column field="PROGRESS" headerText="Progress" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="60"></e-grid-column>
+                <e-grid-column field="SURVEY_REPORT_NO" headerText="SR No." disablehtmlencode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                <e-grid-column field="MAN_HOUR" headerText="M/H" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="50"></e-grid-column>
+                <e-grid-column field="SR" headerText="SR" disablehtmlencode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="60"></e-grid-column>
+                <e-grid-column field="LOG_INPUT" headerText="Log Input" textAlign="Center" template="#templateLogInput" customAttributes=@(new{@class="customCss"}) width="70"></e-grid-column>
+            </e-grid-columns>
+        </ejs-grid>
+    </e-content-template>
+
+    <e-dialog-buttons>
+        <e-dialog-dialogbutton buttonModel="CloseButton_CapInspectionDetail" click="dlgBtnCloseClick_CapInspectionDetail"></e-dialog-dialogbutton>
+    </e-dialog-buttons>
+</ejs-dialog>
+
+<script id="templateLogInput" type="text/x-template">
+    <div>
+        @*fnOpenDetailPic(\"${WORK_IDX}','${PLANNING_IDX}");return;*@
+        <a href=# onclick=fnOpenDetailPic(\"${PIC_SCHEDULE_IDX}");return;>[Log Input]</a>
+    </div>
+</script>
+
+<script>
+    function fnOpenDetailPic(PIC_SCHEDULE_IDX) {
+        var url = "/CapInspectionLogBook/DetailPic/" + PIC_SCHEDULE_IDX;
+        location.href = url;
+    }
+</script>
+
+<script>
+    var dialogObj_CapInspectionDetail;
+
+    function modalCreated_CapInspectionDetail() {
+        // 다이얼로그 Created
+        dialogObj_CapInspectionDetail = this;
+
+        //console.log("modalCreated_CapInspectionDetail");
+    }
+
+    function dialogOpen_CapInspectionDetail() {
+        // 다이얼로그 Open
+    }
+
+    function dialogClose_CapInspectionDetail() {
+        // 다이얼로그 Close
+
+        //CapInspectionDetailClose();
+        dialogObj_CapInspectionDetail.style.display = 'block';
+    }
+
+    function dlgBtnCloseClick_CapInspectionDetail() {
+        // CLOSE 버튼 클릭
+        dialogObj_CapInspectionDetail.hide();
+    }
+
+</script>

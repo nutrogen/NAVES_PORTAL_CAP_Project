@@ -1,0 +1,183 @@
+﻿@using Syncfusion.EJ2
+
+@{
+    ViewBag.PageTitle = "CAP > ";
+    ViewBag.PlatformName = "CAP";
+    ViewBag.MenuName = "Inspection Log Book";
+    ViewBag.FunctionName = "List";
+}
+
+@section SearchSection {
+    <div class="row align-items-center m-0">
+        <div class="col">
+            <ejs-textbox id="SearchString" cssClass="e-outline inputable" placeholder="Search Keyword..."></ejs-textbox>
+        </div>
+        <div class="col-auto">
+            Period
+        </div>
+        <div class="col-2">
+            <ejs-datepicker id="StartDate" value="@DateTime.Now.AddYears(-1).ToShortDateString()" format="yyyy-MM-dd" placeholder="Start Date..." cssClass="inputable"></ejs-datepicker>
+        </div>
+        <div class="col-2">
+            <ejs-datepicker id="EndDate" value="@DateTime.Now.AddYears(10).ToShortDateString()" format="yyyy-MM-dd" placeholder="End Date..." cssClass="inputable"></ejs-datepicker>
+        </div>
+        <div class="col">
+            <button id="Search" type="submit" class="btn btn-purple btn-medium rounded-pill waves-effect waves-light">Search</button>
+        </div>
+    </div>
+}
+
+@section ContentsSection{
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="ps-2">
+            <h3>Inspection List</h3>
+        </div>
+        <div class="ps-1">
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <ejs-grid id="Grid" enableInfiniteScrolling="false" 
+                  height="510"
+                  rowHeight="32"
+                  allowResizing="true"
+                  allowReordering="true"
+                  allowSorting="true"
+                  allowMultiSorting="true"
+                  allowFiltering="true"
+                  allowTextWrap="true"
+                  allowExcelExport="true"
+                  allowPdfExport="true"
+                  allowGrouping="true"
+                  allowPaging="true"
+                  allowSelection="false"
+                  showColumnChooser="false"
+                  recordClick="rowClick"
+                  toolbar="@( new List<string>() { "ColumnChooser", "ExcelExport", "PdfExport", "CsvExport", "Print"})">
+                <e-data-manager url="@Url.Action("UrlDataSource", "CapInspectionLogBook",  new {SearchString = "", StartDate = @DateTime.Now.AddYears(-1).ToShortDateString(), EndDate = @DateTime.Now.AddYears(10).ToShortDateString()} )" adaptor="UrlAdaptor" crossdomain="true"></e-data-manager>
+                <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+                <e-grid-pagesettings pageCount="10" pageSize="10" pageSizes="@(new string[] {"10", "20", "50", "All" })"></e-grid-pagesettings>
+                <e-grid-groupSettings enableLazyLoading="true" allowReordering="true" showDropArea="true"></e-grid-groupSettings>
+                <e-grid-columns>
+                    <e-grid-column field="NO" headerText="No" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="60"></e-grid-column>
+                    <e-grid-column field="PROJECT_STATUS" headerText="Status" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="100"></e-grid-column>
+                    <e-grid-column field="PROJECT_ID" headerText="PROJECT ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+                    <e-grid-column field="NSN_ID" headerText="NSN ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="120"></e-grid-column>
+                    <e-grid-column field="JOB_ID" headerText="JOB ID" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                    <e-grid-column field="WORK_ID" headerText="WORK ID" template="#templatePlan" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                    <e-grid-column field="VESSEL_NAME" headerText="Vessel Name (Type)" disableHtmlEncode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="200"></e-grid-column>
+                    <e-grid-column field="PROJECT_CATEGORY" headerText="Category" textAlign="Center" disableHtmlEncode="false" customAttributes=@(new{@class="customCss"}) width="110"></e-grid-column>
+
+                    <e-grid-column headerText="Surveyor (PIC)" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                               columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() { new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_H", Width = "120", HeaderText = "H", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_M", Width = "120", HeaderText = "M", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_E", Width = "120", HeaderText = "E", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                    new Syncfusion.EJ2.Grids.GridColumn { DisableHtmlEncode = false, Field = "PIC_S", Width = "120", HeaderText = "S", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                                                                                } )">
+                    </e-grid-column>
+
+                    <e-grid-column field="PIC_F" headerText="Fatigue/Strength(PIC)" textAlign="Center" disableHtmlEncode="false" customAttributes=@(new{@class="customCss"}) width="200"></e-grid-column>
+                    <e-grid-column field="INSPECTION_PERIOD_DATE" headerText="Inspection Date/Period" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="200"></e-grid-column>
+                    <e-grid-column field="NEXT_INSPECTION_DUE_STRING" headerText="Next Insp Due" format="yyyy-MM-dd" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="140"></e-grid-column>
+                    <e-grid-column field="SURVEY_REPORT_NO_HTML" headerText="Survey Report No" disablehtmlencode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="160"></e-grid-column>
+                    <e-grid-column field="RECEIPT_REPORT_NO" headerText="Receipt of Report(Final)" disablehtmlencode="false" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="230"></e-grid-column>
+
+                    <e-grid-column headerText="Planned Period" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                               columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() { new Syncfusion.EJ2.Grids.GridColumn { Field = "PLAN_DATE_START", Width = "90", HeaderText = "Start", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                              new Syncfusion.EJ2.Grids.GridColumn { Field = "PLAN_DATE_END", Width = "90", HeaderText = "End", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                                                                            } )">
+                    </e-grid-column>
+                    <e-grid-column field="MAN_HOUR" headerText="M/H" textAlign="Center" customAttributes=@(new{@class="customCss"}) width="80"></e-grid-column>
+                    <e-grid-column field="PROGRESS" headerText="%" customAttributes=@(new{@class="customCss"}) textAlign="Center" width="80"></e-grid-column>
+                    <e-grid-column headerText="Rating" customAttributes=@(new{@class="customCss"}) textAlign="Center" disableHtmlEncode="false"
+                               columns="@( new List<Syncfusion.EJ2.Grids.GridColumn>() { new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_H", Width = "100", HeaderText = "H", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                  new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_M", Width = "100", HeaderText = "M", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                  new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_E", Width = "100", HeaderText = "E", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} },
+                                                                                  new Syncfusion.EJ2.Grids.GridColumn { Field = "RATING_S", Width = "100", HeaderText = "S", TextAlign= Syncfusion.EJ2.Grids.TextAlign.Center, CustomAttributes=new{@class="customCss"} }
+                                                                                } )">
+                    </e-grid-column>
+                </e-grid-columns>
+            </ejs-grid>
+        </div>
+    </div>
+
+    <div id="PartialViews">
+        @Html.Partial("~/Views/CapInspectionLogBook/_Partial/_CapInspectionDetailPartialView.cshtml")
+    </div>
+
+    <script id="templatePlan" type="text/x-template">
+        <div>
+            <a href=# onclick=showInspectionSchedule(\"${WORK_IDX}','${PLANNING_IDX}");return;>${WORK_ID}</a>
+        </div>
+    </script>
+
+    <script>
+        function rowClick(args) {
+            console.log(args);
+            window.location.href = "/CapInspectionLogBook/DetailWork/" + args.rowData.CAP_DEFAULT_DB_IDX;
+        }
+    </script>
+
+}
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // Search Button click 시 조회
+            $("#Search").click(function () {
+                gridRefresh("CapInspectionLogBook", "Grid");
+            });
+
+            $("#SearchString").keyup(function () {
+                // Enter 입력 시 조회
+                if (window.event.keyCode == 13) {
+                    gridRefresh("CapInspectionLogBook", "Grid");
+                }
+            });
+
+            $("#StartDate").keyup(function () {
+                // Enter 입력 시 조회
+                if (window.event.keyCode == 13) {
+                    gridRefresh("CapInspectionLogBook", "Grid");
+                }
+            });
+
+            $("#EndDate").keyup(function () {
+                // Enter 입력 시 조회
+                if (window.event.keyCode == 13) {
+                    gridRefresh("CapInspectionLogBook", "Grid");
+                }
+            });
+        });
+
+        function showInspectionSchedule(WORK_IDX, PLANNING_IDX) {
+            /*
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "@Url.Action("GetGUID")",
+                success: function (response) {
+                    $("#PIC_SCHEDULE_IDX").val(response.Value);
+                    dialogObj_CapPlanningInspectionPic.show();
+                },
+                error: function (req, status, error) {
+                }
+            });
+            */
+
+           console.log('showInspectionDetail PLANNING_IDX :' + PLANNING_IDX);
+
+            var gridDetail = document.getElementById('GridDetail').ej2_instances[0];
+
+            gridDetail.dataSource = new ej.data.DataManager({
+                url: "/CapInspectionLogBook/UrlDataSourcePic?planningIdx=" + PLANNING_IDX,
+                adaptor: new ej.data.UrlAdaptor(),
+                contentType: "application/json; charset=utf-8"
+            });
+
+            dialogObj_CapInspectionDetail.show();
+        }
+    </script>
+}
